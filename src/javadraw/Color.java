@@ -2,7 +2,6 @@ package javadraw;
 
 import javadraw.errors.InvalidArgumentException;
 import javadraw.internal.SneakyThrow;
-import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
 
@@ -16,6 +15,9 @@ public class Color {
      */
     public static final Color NONE = new Color("NONE");
 
+    /**
+     * AWT representation of the color
+     */
     protected java.awt.Color color;
 
     /**
@@ -178,7 +180,11 @@ public class Color {
             color = (java.awt.Color) field.get(null);
         } catch (Exception e) {
             color = null;
-            SneakyThrow.sneakyThrow(new InvalidArgumentException("Invalid color name passed!"));
+            try {
+                SneakyThrow.sneakyThrow(new InvalidArgumentException("Invalid color name passed!"));
+            } catch (Throwable ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         this.r = color.getRed();
@@ -186,11 +192,20 @@ public class Color {
         this.b = color.getBlue();
     }
 
-    @SneakyThrows
+    /**
+     * Create a new Color from the given RGB values
+     * @param r Red value
+     * @param g Green value
+     * @param b Blue value
+     */
     public Color(int r, int g, int b) {
         if(r > 255 || g > 255 || b > 255 ||
             r < 0 || g < 0 || b < 0) {
-            SneakyThrow.sneakyThrow(new InvalidArgumentException("Invalid RGB values passed to Color! (0-255 only)"));
+            try {
+                SneakyThrow.sneakyThrow(new InvalidArgumentException("Invalid RGB values passed to Color! (0-255 only)"));
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
         }
 
         this.r = r;
@@ -209,9 +224,9 @@ public class Color {
     }
 
     /**
-     * Create a new Color
+     * Create a new Color from an AWT Color
      *
-     * @param color
+     * @param color AWT Color to create a color from
      */
     protected Color(java.awt.Color color) {
         this.color = color;
@@ -252,7 +267,21 @@ public class Color {
         return new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255));
     }
 
+    /**
+     * Get an AWT representation of this color
+     * @return An AWT color, with the same values as this color
+     */
     protected java.awt.Color toAWT() {
         return new java.awt.Color(this.red(), this.green(), this.blue());
+    }
+
+    @Override
+    public String toString() {
+        return "Color{" +
+                "color=" + color +
+                ", r=" + r +
+                ", g=" + g +
+                ", b=" + b +
+                '}';
     }
 }

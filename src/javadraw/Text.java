@@ -41,7 +41,11 @@ public class Text extends Renderable {
             // ((javadraw.internal.Text) this.object).setAlignment(alignment, javadraw.internal.Text.TOP);
         } else {
             // System.out.println(align);
-            SneakyThrow.sneakyThrow(new Exception("Alignment passed was not 'LEFT', 'CENTER', or 'RIGHT'. Found: " + align));
+            try {
+                SneakyThrow.sneakyThrow(new Exception("Alignment passed was not 'LEFT', 'CENTER', or 'RIGHT'. Found: " + align));
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
         }
 
         ((javadraw.internal.Text) this.object).setAlignment(alignment, javadraw.internal.Text.TOP);
@@ -176,7 +180,11 @@ public class Text extends Renderable {
         } else if(align.equalsIgnoreCase("right")) {
             alignment = javadraw.internal.Text.RIGHT;
         } else {
-            SneakyThrow.sneakyThrow(new InvalidArgumentException("Alignment passed was not 'LEFT', 'CENTER', or 'RIGHT'. Found: " + align));
+            try {
+                SneakyThrow.sneakyThrow(new InvalidArgumentException("Alignment passed was not 'LEFT', 'CENTER', or 'RIGHT'. Found: " + align));
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
         }
 
         ((javadraw.internal.Text) this.object).setAlignment(alignment, ((javadraw.internal.Text) this.object).getVerticalAlignment());

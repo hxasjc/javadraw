@@ -24,6 +24,7 @@ public class Screen {
 
     /**
      * Get the width of the Screen
+     *
      * @return a double
      */
     public double width() {
@@ -32,6 +33,7 @@ public class Screen {
 
     /**
      * Get the height of the Screen
+     *
      * @return a double
      */
     public double height() {
@@ -40,6 +42,7 @@ public class Screen {
 
     /**
      * Get the title of the Screen (Window)
+     *
      * @return a String
      */
     public String title() {
@@ -48,6 +51,7 @@ public class Screen {
 
     /**
      * Get the Color of the Screen
+     *
      * @return a Color
      */
     public Color color() {
@@ -56,6 +60,7 @@ public class Screen {
 
     /**
      * Set the Color of the Screen
+     *
      * @param color the Color to set to
      * @return the new Color
      */
@@ -66,6 +71,7 @@ public class Screen {
 
     /**
      * Get the center of the Screen
+     *
      * @return the center of the Screen as a Location
      */
     public Location center() {
@@ -74,6 +80,7 @@ public class Screen {
 
     /**
      * Get the top left corner of the Screen
+     *
      * @return the top left corner of the Screen as a Location
      */
     public Location topLeft() {
@@ -82,6 +89,7 @@ public class Screen {
 
     /**
      * Get the top right corner of the Screen
+     *
      * @return the top right corner of the Screen as a Location
      */
     public Location topRight() {
@@ -90,6 +98,7 @@ public class Screen {
 
     /**
      * Get the bottom left corner of the Screen
+     *
      * @return the bottom left corner of the Screen as a Location
      */
     public Location bottomLeft() {
@@ -98,6 +107,7 @@ public class Screen {
 
     /**
      * Get the bottom right corner of the Screen
+     *
      * @return the bottom right corner of the Screen as a Location
      */
     public Location bottomRight() {
@@ -106,6 +116,7 @@ public class Screen {
 
     /**
      * Get the Location of the Mouse
+     *
      * @return the mouse Location
      */
     public Location mouse() {
@@ -114,6 +125,7 @@ public class Screen {
 
     /**
      * Get all objects on the Screen
+     *
      * @return a List of DrawableObjects
      */
     public List<DrawableObject> objects() {
@@ -122,6 +134,7 @@ public class Screen {
 
     /**
      * Get whether or not the Screen contains the passed DrawableObject
+     *
      * @param object the DrawableObject to check
      * @return a boolean
      */
@@ -138,6 +151,7 @@ public class Screen {
 
     /**
      * Removes an object from the Screen's internal tracking.
+     *
      * @param object the object to remove
      */
     protected void remove(DrawableObject object) {
@@ -153,6 +167,7 @@ public class Screen {
 
     /**
      * Cause the Screen thread to sleep for a specified duration of time in seconds
+     *
      * @param seconds time to wait in seconds
      */
     public void sleep(double seconds) {
@@ -166,6 +181,31 @@ public class Screen {
         this.canvas.update();
     }
 
+    public Renderable[] getOverlappingObjects(Renderable renderable) {
+        Set<Renderable> overlaps = new HashSet<>();
 
+        for (DrawableObject object : objects) {
+            if (Renderable.class.isAssignableFrom(object.getClass())) {
+                if (!object.equals(renderable)) {
+                    if (renderable.overlaps((Renderable) object)) {
+                        overlaps.add((Renderable) object);
+                    }
+                }
+            }
+        }
 
+        return overlaps.toArray(new Renderable[0]);
+    }
+
+    public Window getWindow() {
+        return window;
+    }
+
+    @Override
+    public String toString() {
+        return "Screen{" +
+                "canvas=" + canvas +
+                ", objects=" + objects +
+                '}';
+    }
 }

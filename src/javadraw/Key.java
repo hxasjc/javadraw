@@ -3,6 +3,7 @@ package javadraw;
 import javadraw.errors.InvalidArgumentException;
 import javadraw.internal.SneakyThrow;
 
+import javax.management.relation.RelationNotFoundException;
 import java.lang.reflect.Field;
 import java.util.Locale;
 import java.util.Objects;
@@ -12,13 +13,38 @@ import java.util.Objects;
  */
 public class Key {
 
+
+    /**
+     * Back quote
+     */
     public static final Key BACK_QUOTE = new Key("Back_quote");
+    /**
+     * Top of keyboard 1
+     */
     public static final Key ONE = new Key("1");
+    /**
+     * Top of keyboard 2
+     */
     public static final Key TWO = new Key("2");
+    /**
+     * Top of keyboard 3
+     */
     public static final Key THREE = new Key("3");
+    /**
+     * Top of keyboard 4
+     */
     public static final Key FOUR = new Key("4");
+    /**
+     * Top of keyboard 5
+     */
     public static final Key FIVE = new Key("5");
+    /**
+     * Top of keyboard 6
+     */
     public static final Key SIX = new Key("6");
+    /**
+     * Top of keyboard 7
+     */
     public static final Key SEVEN = new Key("7");
     public static final Key EIGHT = new Key("8");
     public static final Key NINE = new Key("9");
@@ -84,11 +110,33 @@ public class Key {
     public static final Key LEFT = new Key("Left");
     public static final Key RIGHT = new Key("Right");
 
+    public static final Key NUMPAD0 = new Key("Numpad0");
+    public static final Key NUMPAD1 = new Key("Numpad1");
+    public static final Key NUMPAD2 = new Key("Numpad2");
+    public static final Key NUMPAD3 = new Key("Numpad3");
+    public static final Key NUMPAD4 = new Key("Numpad4");
+    public static final Key NUMPAD5 = new Key("Numpad5");
+    public static final Key NUMPAD6 = new Key("Numpad6");
+    public static final Key NUMPAD7 = new Key("Numpad7");
+    public static final Key NUMPAD8 = new Key("Numpad8");
+    public static final Key NUMPAD9 = new Key("Numpad9");
+
+    public static final Key ADD = new Key("Add");
+    public static final Key SUBTRACT = new Key("Subtract");
+    public static final Key MULTIPLY = new Key("Multiply");
+    public static final Key DIVIDE = new Key("Divide");
+    public static final Key DECIMAL = new Key("Decimal");
+
     String character;
     public Key(String character) {
         this.character = character;
     }
 
+    /**
+     * Gets the Key representing the given String, if any
+     * @param keyChar String to get the Key for
+     * @return The Key representing the given String
+     */
     public static Key fromChar(String keyChar) {
         Key key;
 
@@ -96,8 +144,7 @@ public class Key {
             Field field = Key.class.getField(keyChar.toUpperCase());
             key = (Key) field.get(null);
         } catch (Exception e) {
-            key = null;
-            SneakyThrow.sneakyThrow(new InvalidArgumentException("Invalid color name passed!"));
+            throw new RuntimeException("Could not find a Key object for key code: " + keyChar);
         }
 
         return key;
@@ -127,5 +174,12 @@ public class Key {
     @Override
     public int hashCode() {
         return Objects.hash(character);
+    }
+
+    @Override
+    public String toString() {
+        return "Key{" +
+                "character='" + character + '\'' +
+                '}';
     }
 }

@@ -115,4 +115,12 @@ public class Location {
                 "y=" + y() +
                 '}';
     }
+
+    public static Location addLocations(Location loc1, Location loc2) {
+        return new Location(loc1.x() + loc2.x(), loc1.y() + loc2.y());
+    }
+
+    public static Location subtractLocations(Location loc1, Location loc2) {
+        return new Location(loc1.x() - loc2.x(), loc1.y() - loc2.y());
+    }
 }

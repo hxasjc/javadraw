@@ -4,14 +4,14 @@ import javadraw.internal.Drawable2DInterface;
 import javadraw.internal.ObjectDrawShape;
 import javadraw.internal.Resizable2DInterface;
 import javadraw.internal.SneakyThrow;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import javadraw.errors.NotImplementedException;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
-public abstract class Renderable implements DrawableObject {
+public abstract class Renderable implements DrawableObject, MultiRenderableMember {
 
     private static final Map<Class<?>, Class<?>> wrapperToPrimitive = new HashMap<>();
     static {
@@ -448,6 +448,7 @@ public abstract class Renderable implements DrawableObject {
 
     /**
      * Set the visibility value of the Renderable
+     *
      * @param visible the visibility value
      * @return the new visibility value
      */
@@ -487,7 +488,7 @@ public abstract class Renderable implements DrawableObject {
     }
 
     protected static Location[] compileLocations(PathIterator iterator) {
-        List<Location> list = new ArrayList<Location>();
+        List<Location> list = new ArrayList<>();
         while(!iterator.isDone()) {
             double[] coords = new double[2];
             iterator.currentSegment(coords);
@@ -553,10 +554,14 @@ public abstract class Renderable implements DrawableObject {
                     }
             ).toArray(Class[]::new);
 
-            Constructor constructor = clazz.getDeclaredConstructor(parameterTypes);
-            renderable = (Renderable) constructor.newInstance(this.getParameters());
+            Constructor<? extends Renderable> constructor = clazz.getDeclaredConstructor(parameterTypes);
+            renderable = constructor.newInstance(this.getParameters());
         } catch (Exception e) {
-            SneakyThrow.sneakyThrow(e);
+            try {
+                SneakyThrow.sneakyThrow(e);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         if(renderable == null) {
@@ -582,9 +587,9 @@ public abstract class Renderable implements DrawableObject {
      * @return the new Transform
      */
     public Transform transform(Transform transform) {
-        this.width(transform.width);
-        this.height(transform.height);
-        this.rotation(transform.angle);
+        this.width(transform.width());
+        this.height(transform.height());
+        this.rotation(transform.angle());
 
         return this.transform();
     }
@@ -600,4 +605,66 @@ public abstract class Renderable implements DrawableObject {
         return this.transform(new Transform(width, height, angle));
     }
 
+    public Renderable[] getOverlappingObjects(Renderable renderable) {
+        return screen.getOverlappingObjects(renderable);
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() +
+                "{" +
+                //"screen=" + screen +
+                "location=" + location +
+                ", width=" + width +
+                ", height=" + height +
+                ", angle=" + angle +
+                ", color=" + color +
+                ", borderColor=" + borderColor +
+                ", border=" + border +
+                ", fill=" + fill +
+                ", visible=" + visible +
+                ", object=" + object +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Renderable)) return false;
+
+        Renderable that = (Renderable) o;
+
+        if (Double.compare(that.width, width) != 0) return false;
+        if (Double.compare(that.height, height) != 0) return false;
+        if (Double.compare(that.angle, angle) != 0) return false;
+        if (fill != that.fill) return false;
+        if (visible != that.visible) return false;
+        if (screen != null ? !screen.equals(that.screen) : that.screen != null) return false;
+        if (location != null ? !location.equals(that.location) : that.location != null) return false;
+        if (color != null ? !color.equals(that.color) : that.color != null) return false;
+        if (borderColor != null ? !borderColor.equals(that.borderColor) : that.borderColor != null) return false;
+        if (border != null ? !border.equals(that.border) : that.border != null) return false;
+        return object != null ? object.equals(that.object) : that.object == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = screen != null ? screen.hashCode() : 0;
+        result = 31 * result + (location != null ? location.hashCode() : 0);
+        temp = Double.doubleToLongBits(width);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(height);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(angle);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (color != null ? color.hashCode() : 0);
+        result = 31 * result + (borderColor != null ? borderColor.hashCode() : 0);
+        result = 31 * result + (border != null ? border.hashCode() : 0);
+        result = 31 * result + (fill ? 1 : 0);
+        result = 31 * result + (visible ? 1 : 0);
+        result = 31 * result + (object != null ? object.hashCode() : 0);
+        return result;
+    }
 }

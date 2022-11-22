@@ -31,6 +31,8 @@ public class Window {
             Window window = (Window) clazz.newInstance();
             window._open(width, height, title);
 
+            System.out.println(window.getClass());
+
             return window;
         } catch(ClassNotFoundException e) {
             e.printStackTrace();
@@ -328,4 +330,21 @@ public class Window {
 
     }
 
+    public void addMouseEventListener(String type, MouseEventListener listener) {
+        controller.addMouseEventListener(type, listener);
+    }
+
+    public void addKeyEventListener(String type, KeyEventListener listener) {
+        controller.addKeyEventListener(type, listener);
+    }
+
+    @Override
+    public String toString() {
+        return "Window{" +
+                "thread=" + thread +
+                ", controller=" + controller +
+                ", screen=" + screen +
+                ", oldInput=" + oldInput +
+                '}';
+    }
 }

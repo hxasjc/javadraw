@@ -1,5 +1,7 @@
 package javadraw;
 
+import javadraw.internal.Resizable2DInterface;
+
 /**
  * An Object which is Drawable on the Screen (Renderables and non-Renderables).
  */
@@ -25,7 +27,7 @@ public interface DrawableObject {
     double x(double x);
 
     /**
-     * Set thte y-coordinate of the Object
+     * Set the y-coordinate of the Object
      * @param y the y-coordinate to set to
      * @return the new y-coordinate
      */
@@ -77,5 +79,4 @@ public interface DrawableObject {
      * Remove the Object from the Screen (but not from memory).
      */
     void remove();
-
 }

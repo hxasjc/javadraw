@@ -1,5 +1,6 @@
 package javadraw;
 
+import javadraw.errors.NotImplementedException;
 import javadraw.internal.Drawable1DInterface;
 
 /**
@@ -231,4 +232,16 @@ public class Line implements DrawableObject {
         this.screen.remove(this);
     }
 
+    @Override
+    public String toString() {
+        return "Line{" +
+                "screen=" + screen +
+                ", object=" + object +
+                ", location1=" + location1 +
+                ", location2=" + location2 +
+                ", color=" + color +
+                ", thickness=" + thickness +
+                ", visible=" + visible +
+                '}';
+    }
 }

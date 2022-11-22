@@ -5,7 +5,7 @@ import javadraw.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-class SortingTest extends Window {
+public class SortingTest extends Window {
 
     public static void main(String[] args) {
         Window.open(800, 600, "Sorting");

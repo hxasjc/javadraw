@@ -17,6 +17,12 @@ public class Border {
 
     private BorderObject object;
 
+    /**
+     * Creates a new border around the given object with the given color and width
+     * @param object Object to create a border around
+     * @param color What color the border should be
+     * @param width How wide the border should be
+     */
     public Border(Renderable object, Color color, double width) {
         this.parent = object;
         this.color = color;
@@ -25,10 +31,19 @@ public class Border {
         this.object = new BorderObject(object, color, width);
     }
 
+    /**
+     * Creates a new border around the given object using the given color
+     * @param object Object to create a border around
+     * @param color What color the border should be
+     */
     public Border(Renderable object, Color color) {
         this(object, color, 1);
     }
 
+    /**
+     * Creates a new border around the given object
+     * @param object Object to create a border around
+     */
     public Border(Renderable object) {
         this(object, Color.BLACK);
     }
@@ -49,6 +64,16 @@ public class Border {
         this.object.moveTo(parent.location);
         this.object.setRotation(parent.angle);
         this.object.updateShape();
+    }
+
+    @Override
+    public String toString() {
+        return "Border{" +
+                "parent=" + parent +
+                ", color=" + color +
+                ", width=" + width +
+                ", object=" + object +
+                '}';
     }
 
     /**

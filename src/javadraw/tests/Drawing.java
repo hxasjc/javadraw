@@ -2,7 +2,7 @@ package javadraw.tests;
 
 import javadraw.*;
 
-class Drawing extends Window {
+public class Drawing extends Window {
 
     public static void main(String[] args) {
         Window.open();

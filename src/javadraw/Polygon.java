@@ -79,4 +79,21 @@ public class Polygon extends Renderable {
     protected Object[] getParameters() {
         return this.parameterValues;
     }
+
+    @Override
+    public String toString() {
+        return "Polygon{" +
+                "numSides=" + numSides +
+                ", screen=" + screen +
+                ", location=" + location +
+                ", width=" + width +
+                ", height=" + height +
+                ", angle=" + angle +
+                ", color=" + color +
+                ", borderColor=" + borderColor +
+                ", fill=" + fill +
+                ", visible=" + visible +
+                ", object=" + object +
+                '}';
+    }
 }

@@ -3,6 +3,8 @@ package javadraw;
 import javadraw.internal.FilledPolygon;
 import javadraw.internal.FramedPolygon;
 
+import java.util.Arrays;
+
 /**
  * A custom polygon with user-defined vertices.
  */
@@ -12,6 +14,16 @@ public class CustomPolygon extends Renderable implements CustomRenderable {
 
     private Location[] vertices;
 
+    /**
+     * Create a custom polygon
+     * @param screen Screen to draw the shape on
+     * @param vertices Vertices to draw the shape with
+     * @param color Color to draw the shape with
+     * @param border Color to draw the border with
+     * @param fill Whether to fill in the shape
+     * @param rotation Degrees to rotate the shape by
+     * @param visible Whether the shape is visible
+     */
     public CustomPolygon(Screen screen, Location[] vertices, Color color, Color border, boolean fill, double rotation, boolean visible) {
         super(screen, vertices[0], -1, -1, color, border, fill, rotation, visible);
         this.parameterValues = new Object[] {screen, vertices, color, border, fill, rotation, visible};
@@ -30,18 +42,42 @@ public class CustomPolygon extends Renderable implements CustomRenderable {
         this.visible(visible);
     }
 
+    /**
+     * Create a custom polygon
+     * @param screen Screen to draw the shape on
+     * @param vertices Vertices to draw the shape with
+     * @param color Color to draw the shape with
+     * @param rotation Degrees to rotate the shape by
+     */
     public CustomPolygon(Screen screen, Location[] vertices, Color color, double rotation) {
         this(screen, vertices, color, Color.NONE, true, rotation, true);
     }
 
+    /**
+     * Create a custom polygon
+     * @param screen Screen to the shape on
+     * @param vertices Vertices to draw the shape with
+     * @param rotation Degrees to rotate the shape by
+     */
     public CustomPolygon(Screen screen, Location[] vertices, double rotation) {
         this(screen, vertices, new Color("BLACK"), rotation);
     }
 
+    /**
+     * Create a custom polygon
+     * @param screen Screen to draw the shape on
+     * @param vertices Vertices to draw the shape with
+     * @param color Color to draw the shape with
+     */
     public CustomPolygon(Screen screen, Location[] vertices, Color color) {
         this(screen, vertices, color, 0);
     }
 
+    /**
+     * Create a custom polygon
+     * @param screen Screen to draw the shape on
+     * @param vertices Vertices to create the shape with
+     */
     public CustomPolygon(Screen screen, Location[] vertices) {
         this(screen, vertices, new Color("BLACK"));
     }
@@ -84,5 +120,22 @@ public class CustomPolygon extends Renderable implements CustomRenderable {
     @Override
     protected Object[] getParameters() {
         return parameterValues;
+    }
+
+    @Override
+    public String toString() {
+        return "CustomPolygon{" +
+                "vertices=" + Arrays.toString(vertices) +
+                ", screen=" + screen +
+                ", location=" + location +
+                ", width=" + width +
+                ", height=" + height +
+                ", angle=" + angle +
+                ", color=" + color +
+                ", borderColor=" + borderColor +
+                ", fill=" + fill +
+                ", visible=" + visible +
+                ", object=" + object +
+                '}';
     }
 }
