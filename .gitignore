@@ -26,3 +26,7 @@ hs_err_pid*
 
 # javadoc
 docs/
+
+multirenderable transformation planning.md
+out/
+.idea/
