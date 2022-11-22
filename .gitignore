@@ -30,4 +30,4 @@ docs/
 multirenderable transformation planning.md
 out/
 .idea/
-src/javadraw/tests
+src/javadraw/tests/
