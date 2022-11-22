@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"javadraw"},{"l":"javadraw.builders"},{"l":"javadraw.errors"},{"l":"javadraw.ui"}];updateSearchResults();
