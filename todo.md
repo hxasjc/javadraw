@@ -8,3 +8,12 @@
 - [ ] Fix Polygon impl
 - [x] Image
 - [ ] Lines
+
+
+- [ ] Implement basic UI components
+  - [ ] Slider
+  - [ ] Progress bar
+  - [ ] Checkbox ☑ ☐
+  - [ ] Radio buttons
+- [ ] Add support for remaining keys
+- [ ] Investigate adding support for more AWT paints (GradientPaint, etc)
