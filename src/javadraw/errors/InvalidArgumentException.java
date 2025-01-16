@@ -2,7 +2,7 @@ package javadraw.errors;
 
 public class InvalidArgumentException extends Exception {
 
-    private String message;
+    private final String message;
 
     public InvalidArgumentException(String message) {
         this.message = message;

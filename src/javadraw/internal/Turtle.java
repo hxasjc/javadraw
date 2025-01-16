@@ -21,8 +21,8 @@ public class Turtle extends ObjectDrawShape implements DrawableStrokeInterface, 
     private boolean pen;
     private TurtleFill fill;
     private TurtleLine line;
-    private ArrayList fills;
-    private ArrayList lines;
+    private ArrayList<TurtleFill> fills;
+    private ArrayList<TurtleLine> lines;
     private double heading;
     private boolean turtleHidden;
     private Location internalLocation;
@@ -30,10 +30,10 @@ public class Turtle extends ObjectDrawShape implements DrawableStrokeInterface, 
     private double sketchScale;
     private double sketchRotation;
     private Location sketchOrigin;
-    private HashMap recolorings;
+    private final HashMap<Color, Color> recolorings;
     private static final int STEP_SIZE = 40;
     private static final Shape DEFAULT_SHAPE = defaultShape();
-    private static double[] t = new double[4];
+    private static final double[] t = new double[4];
 
     public void hideTurtle() {
         this.turtleHidden = true;
@@ -108,7 +108,7 @@ public class Turtle extends ObjectDrawShape implements DrawableStrokeInterface, 
         this.internalLocation = new Location((double)0.0F, (double)0.0F);
         this.setMyLocation(new TurtleLocation(x, y));
         this.pen = true;
-        this.recolorings = new HashMap();
+        this.recolorings = new HashMap<>();
         this.heading = (double)0.0F;
         this.stroke = DEFAULT_STROKE;
         this.turtleHidden = false;
@@ -146,16 +146,16 @@ public class Turtle extends ObjectDrawShape implements DrawableStrokeInterface, 
         this.internalLocation = clone.internalLocation;
         this.setMyLocation(new TurtleLocation(clone.getDoubleX(), clone.getDoubleY()));
         this.pen = clone.pen;
-        ArrayList activeFills = new ArrayList();
+        ArrayList<TurtleFill> activeFills = new ArrayList<>();
         this.fill = new TurtleFill(clone.fill);
-        this.fills = new ArrayList();
+        this.fills = new ArrayList<>();
 
         for(int i = 0; i < clone.fills.size() - activeFills.size(); ++i) {
             new TurtleFill((TurtleFill)clone.fills.get(i));
         }
 
         this.fills.addAll(activeFills);
-        this.lines = new ArrayList();
+        this.lines = new ArrayList<>();
 
         for(int i = 0; i < clone.lines.size(); ++i) {
             new TurtleLine((TurtleLine)clone.lines.get(i));
@@ -165,7 +165,7 @@ public class Turtle extends ObjectDrawShape implements DrawableStrokeInterface, 
             this.line = (TurtleLine)this.lines.get(this.lines.size() - 1);
         }
 
-        this.recolorings = new HashMap(clone.recolorings);
+        this.recolorings = new HashMap<>(clone.recolorings);
         this.heading = clone.heading;
         this.stroke = clone.stroke;
         this.turtleHidden = clone.turtleHidden;
@@ -205,8 +205,8 @@ public class Turtle extends ObjectDrawShape implements DrawableStrokeInterface, 
         AffineTransform saveAT = g.getTransform();
         g.transform(this.sketchTransform);
         if (this.lines != null) {
-            for(int i = 0; i < this.fills.size(); ++i) {
-                TurtleDrawable draw = (TurtleDrawable)this.fills.get(i);
+            for (TurtleFill turtleFill : this.fills) {
+                TurtleDrawable draw = (TurtleDrawable) turtleFill;
                 draw.draw(g);
             }
 
@@ -278,8 +278,8 @@ public class Turtle extends ObjectDrawShape implements DrawableStrokeInterface, 
     }
 
     public void clearSketch() {
-        this.fills = new ArrayList();
-        this.lines = new ArrayList();
+        this.fills = new ArrayList<>();
+        this.lines = new ArrayList<>();
         this.fill = null;
         this.line = null;
         this.update();
@@ -464,7 +464,7 @@ public class Turtle extends ObjectDrawShape implements DrawableStrokeInterface, 
         return this.toString(Text.formatDecimal(this.getDoubleX()) + ", " + Text.formatDecimal(this.getDoubleY()));
     }
 
-    private abstract class TurtleDrawable {
+    private abstract static class TurtleDrawable {
         private TurtleDrawable() {
         }
 
@@ -587,7 +587,7 @@ public class Turtle extends ObjectDrawShape implements DrawableStrokeInterface, 
                     try {
                         Turtle.this.sketchTransform.createInverse().transform(Turtle.t, 0, Turtle.t, 2, 1);
                         Turtle.this.moveInternal(Turtle.t[2] + Turtle.this.sketchTransform.getTranslateX(), Turtle.t[3] + Turtle.this.sketchTransform.getTranslateY());
-                    } catch (NoninvertibleTransformException var8) {
+                    } catch (NoninvertibleTransformException ignored) {
                     }
                 }
             }

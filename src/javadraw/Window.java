@@ -3,8 +3,6 @@ package javadraw;
 import javadraw.internal.WindowController;
 import javadraw.internal.WindowThread;
 
-import java.lang.reflect.Constructor;
-
 /**
  * The primary thread-controller for the application, the Window passes inputs and is meant to be the parent of any javaDraw program.
  */
@@ -32,13 +30,11 @@ public class Window {
             window._open(width, height, title);
 
             return window;
-        } catch(ClassNotFoundException e) {
+        } catch(ClassNotFoundException | InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             System.out.println("Class must be public in order to use javaDraw!");
-        } catch (InstantiationException e) {
-            e.printStackTrace();
         }
 
         return null;
@@ -58,13 +54,11 @@ public class Window {
             window._open(width, height, "javaDraw");
 
             return window;
-        } catch(ClassNotFoundException e) {
+        } catch(ClassNotFoundException | InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             System.out.println("Class must be public in order to use javaDraw!");
-        } catch (InstantiationException e) {
-            e.printStackTrace();
         }
 
         return null;
@@ -81,13 +75,11 @@ public class Window {
             Window window = (Window) clazz.newInstance();
             window._open(800, 600, "javaDraw");
             return window;
-        } catch(ClassNotFoundException e) {
+        } catch(ClassNotFoundException | InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             System.out.println("Class must be public in order to use javaDraw!");
-        } catch (InstantiationException e) {
-            e.printStackTrace();
         }
 
         return null;

@@ -13,7 +13,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import javax.swing.JComponent;
 
 /** @deprecated */
@@ -22,8 +21,8 @@ public class JDrawingCanvas extends JComponent implements DrawingCanvas {
     private static final Color MAJOR_GRID_COLOR = new Color(0, 0, 0, 80);
     private boolean auto;
     private Location loupe = null;
-    private double loupeSize = (double)30.0F;
-    private double loupeZoom = (double)3.0F;
+    private double loupeSize = 30.0F;
+    private double loupeZoom = 3.0F;
     private static int ID = 0;
     private final int id;
     private BufferedImage buffer;
@@ -70,7 +69,7 @@ public class JDrawingCanvas extends JComponent implements DrawingCanvas {
     }
 
     private void createBuffer() {
-        if (this.buffer == null || this.buffer.getWidth((ImageObserver)null) != this.getWidth() || this.buffer.getHeight((ImageObserver)null) != this.getHeight()) {
+        if (this.buffer == null || this.buffer.getWidth(null) != this.getWidth() || this.buffer.getHeight(null) != this.getHeight()) {
             this.buffer = new BufferedImage(this.getWidth(), this.getHeight(), 1);
         }
     }
@@ -105,7 +104,7 @@ public class JDrawingCanvas extends JComponent implements DrawingCanvas {
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         this.repaintBuffer();
-        graphics.drawImage(this.buffer, 0, 0, (ImageObserver)null);
+        graphics.drawImage(this.buffer, 0, 0, null);
         if (this.controller.isGridVisible()) {
             this.paintGrid(graphics);
         }

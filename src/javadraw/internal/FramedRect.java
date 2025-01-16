@@ -22,7 +22,7 @@ public class FramedRect extends ObjectDrawRectangularShape implements DrawableSt
     }
 
     public FramedRect(double x, double y, double width, double height, DrawingCanvas canvas) {
-        this(x, y, width, height, (Color)null, canvas);
+        this(x, y, width, height, null, canvas);
     }
 
     public FramedRect(Location point, double width, double height, Color color, DrawingCanvas canvas) {
@@ -30,7 +30,7 @@ public class FramedRect extends ObjectDrawRectangularShape implements DrawableSt
     }
 
     public FramedRect(Location point, double width, double height, DrawingCanvas canvas) {
-        this(point, width, height, (Color)null, canvas);
+        this(point, width, height, null, canvas);
     }
 
     public FramedRect(Location corner1, Location corner2, Color color, DrawingCanvas canvas) {
@@ -38,7 +38,7 @@ public class FramedRect extends ObjectDrawRectangularShape implements DrawableSt
     }
 
     public FramedRect(Location corner1, Location corner2, DrawingCanvas canvas) {
-        this(corner1, corner2, (Color)null, canvas);
+        this(corner1, corner2, null, canvas);
     }
 
     public FramedRect(double x, double y, double width, double height, double angle, Color color, DrawingCanvas canvas) {
@@ -56,7 +56,7 @@ public class FramedRect extends ObjectDrawRectangularShape implements DrawableSt
     }
 
     public FramedRect(double x, double y, double width, double height, double angle, DrawingCanvas canvas) {
-        this(x, y, width, height, angle, (Color)null, canvas);
+        this(x, y, width, height, angle, null, canvas);
     }
 
     /** @deprecated */
@@ -65,7 +65,7 @@ public class FramedRect extends ObjectDrawRectangularShape implements DrawableSt
     }
 
     public double getLineWidth() {
-        return (double)this.stroke.getLineWidth();
+        return this.stroke.getLineWidth();
     }
 
     public BasicStroke getStroke() {

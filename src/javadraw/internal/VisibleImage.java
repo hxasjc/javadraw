@@ -17,18 +17,18 @@ import java.util.HashMap;
 
 public class VisibleImage extends ObjectDrawRectangularShape {
     private Image image;
-    private static HashMap observers = new HashMap();
+    private static final HashMap<Image, BlockingImageObserver> observers = new HashMap<>();
     private boolean manualSize;
 
     public VisibleImage(Image image, double x, double y, double width, double height, DrawingCanvas canvas) {
-        super(x, y, width, height, true, (Color)null, canvas);
+        super(x, y, width, height, true, null, canvas);
         this.manualSize = true;
         this.image = image;
         this.ready();
     }
 
     public VisibleImage(Image image, double x, double y, DrawingCanvas canvas) {
-        this(image, x, y, (double)blockAndGetImageWidth(image), (double)blockAndGetImageHeight(image), canvas);
+        this(image, x, y, blockAndGetImageWidth(image), blockAndGetImageHeight(image), canvas);
         this.manualSize = false;
     }
 
@@ -129,7 +129,7 @@ public class VisibleImage extends ObjectDrawRectangularShape {
                         synchronized(observer) {
                             observer.wait();
                         }
-                    } catch (InterruptedException var5) {
+                    } catch (InterruptedException ignored) {
                     }
                 }
 

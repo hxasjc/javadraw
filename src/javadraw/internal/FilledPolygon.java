@@ -23,13 +23,13 @@ public class FilledPolygon extends ObjectDrawPolygon implements Polygon, Seriali
     }
 
     public FilledPolygon(int numSides, double x, double y, double width, double height, double rotation, DrawingCanvas canvas) {
-        super(numSides, x, y, width, height, rotation, true, (Color)null, canvas);
+        super(numSides, x, y, width, height, rotation, true, null, canvas);
         this.numSides = numSides;
         this.ready();
     }
 
     public FilledPolygon(int numSides, double x, double y, double width, double height, DrawingCanvas canvas) {
-        this(numSides, x, y, width, height, (double)0.0F, canvas);
+        this(numSides, x, y, width, height, 0.0F, canvas);
     }
 
     public FilledPolygon(int numSides, Location loc, double width, double height, double rotation, Color color, DrawingCanvas canvas) {
@@ -37,15 +37,15 @@ public class FilledPolygon extends ObjectDrawPolygon implements Polygon, Seriali
     }
 
     public FilledPolygon(int numSides, Location loc, double width, double height, double rotation, DrawingCanvas canvas) {
-        this(numSides, loc.getDoubleX(), loc.getDoubleY(), width, height, rotation, (Color)null, canvas);
+        this(numSides, loc.getDoubleX(), loc.getDoubleY(), width, height, rotation, null, canvas);
     }
 
     public FilledPolygon(int numSides, double x, double y, double width, double height, Color c, DrawingCanvas canvas) {
-        this(numSides, x, y, width, height, (double)0.0F, c, canvas);
+        this(numSides, x, y, width, height, 0.0F, c, canvas);
     }
 
     public FilledPolygon(int numSides, Location loc, double width, double height, DrawingCanvas canvas) {
-        this(numSides, loc.getDoubleX(), loc.getDoubleY(), width, height, (double)0.0F, (Color)null, canvas);
+        this(numSides, loc.getDoubleX(), loc.getDoubleY(), width, height, 0.0F, null, canvas);
     }
 
     public FilledPolygon(Location[] points, double x, double y, double rotation, Color c, DrawingCanvas canvas) {
@@ -55,15 +55,15 @@ public class FilledPolygon extends ObjectDrawPolygon implements Polygon, Seriali
     }
 
     public FilledPolygon(Location[] points, double x, double y, double rotation, DrawingCanvas canvas) {
-        this(points, x, y, rotation, (Color)null, canvas);
+        this(points, x, y, rotation, null, canvas);
     }
 
     public FilledPolygon(Location[] points, double x, double y, Color c, DrawingCanvas canvas) {
-        this(points, x, y, (double)0.0F, c, canvas);
+        this(points, x, y, 0.0F, c, canvas);
     }
 
     public FilledPolygon(Location[] points, double x, double y, DrawingCanvas canvas) {
-        this(points, x, y, (double)0.0F, (Color)null, canvas);
+        this(points, x, y, 0.0F, null, canvas);
     }
 
     public FilledPolygon(Location[] points, Location loc, double rotation, Color c, DrawingCanvas canvas) {
@@ -71,7 +71,7 @@ public class FilledPolygon extends ObjectDrawPolygon implements Polygon, Seriali
     }
 
     public FilledPolygon(ArrayList<Location> points, double x, double y, double rotation, Color c, DrawingCanvas canvas) {
-        super((Location[])points.toArray(new Location[points.size()]), x, y, rotation, true, c, canvas);
+        super(points.toArray(new Location[0]), x, y, rotation, true, c, canvas);
         this.ready();
     }
 
@@ -80,33 +80,33 @@ public class FilledPolygon extends ObjectDrawPolygon implements Polygon, Seriali
     }
 
     public FilledPolygon(ArrayList<Location> points, Location loc, Color c, DrawingCanvas canvas) {
-        this(points, loc.getDoubleX(), loc.getDoubleY(), (double)0.0F, c, canvas);
+        this(points, loc.getDoubleX(), loc.getDoubleY(), 0.0F, c, canvas);
     }
 
     public FilledPolygon(ArrayList<Location> points, double x, double y, double rotation, DrawingCanvas canvas) {
-        this((ArrayList)points, x, y, rotation, (Color)null, canvas);
+        this(points, x, y, rotation, null, canvas);
     }
 
     public FilledPolygon(ArrayList<Location> points, double x, double y, DrawingCanvas canvas) {
-        this(points, x, y, (double)0.0F, canvas);
+        this(points, x, y, 0.0F, canvas);
     }
 
     public Shape makeShape() {
         int DEFAULT_RADIUS = 20;
-        List<Location> points = (List<Location>)(this.regular ? new ArrayList() : Arrays.asList(this.getPoints()));
+        List<Location> points = (this.regular ? new ArrayList<>() : (List<Location>) Arrays.asList(this.getPoints()));
         if (this.regular) {
-            double radius = (double)(DEFAULT_RADIUS / 2);
+            double radius = (double) DEFAULT_RADIUS / 2;
             double angle = (double)180.0F - (double)360.0F / (double)this.getSides();
             double theta = (Math.PI * 2D) / (double)this.getSides();
             angle = theta;
             Location startLoc = new Location((double)this.getX() + this.getDoubleWidth() / (double)2.0F, (double)this.getY() + this.getDoubleHeight() / (double)2.0F);
             new Location(startLoc);
             double a = (Math.PI * 2D) / (double)this.getSides() * (double)(DEFAULT_RADIUS / 2);
-            double n = (double)this.getSides();
+            double n = this.getSides();
             double apothem = a / ((double)2.0F * Math.tan((double)180.0F / n * Math.PI / (double)180.0F));
 
             for(int i = 0; i < this.getSides(); ++i) {
-                Location newLoc = new Location((double)0.0F, (double)0.0F);
+                Location newLoc = new Location(0.0F, 0.0F);
                 newLoc.translate(this.getDoubleWidth() / (double)2.0F * Math.sin(angle * (double)i), (this.getDoubleHeight() / (double)2.0F + apothem / (double)2.0F - (double)1.0F) * -Math.cos(angle * (double)i));
                 points.add(newLoc);
             }
@@ -133,9 +133,9 @@ public class FilledPolygon extends ObjectDrawPolygon implements Polygon, Seriali
         double diameter = this.getDoubleHeight();
         double radius = diameter / (double)2.0F;
         double theta = (Math.PI * 2D) / (double)this.numSides;
-        List<Location> points = this.regular ? new ArrayList() : (ArrayList)Arrays.asList(this.getPoints());
+        ArrayList<Location> points = this.regular ? new ArrayList<>() : (ArrayList<Location>) Arrays.asList(this.getPoints());
         if (this.regular) {
-            List<Location> locations = new ArrayList();
+            List<Location> locations = new ArrayList<>();
 
             for(int i = 0; i < this.numSides; ++i) {
                 locations.add(new Location(radius * Math.sin((Math.PI * 2D) / (double)this.numSides * (double)i) + radius, radius * Math.cos((Math.PI * 2D) / (double)this.numSides * (double)i) + radius));
@@ -144,9 +144,9 @@ public class FilledPolygon extends ObjectDrawPolygon implements Polygon, Seriali
             System.out.println(locations);
             double scaleFactorX = this.getDoubleWidth() / diameter;
             double scaleFactorY = this.getDoubleHeight() / diameter;
-            double cx = (double)0.0F;
-            double cy = (double)0.0F;
-            List<Location> points2 = new ArrayList();
+            double cx = 0.0F;
+            double cy = 0.0F;
+            ArrayList<Location> points2 = new ArrayList<>();
 
             for(Location point : locations) {
                 double newX = scaleFactorX * (point.getDoubleX() - cx) + cx;

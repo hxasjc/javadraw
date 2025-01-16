@@ -25,7 +25,7 @@ public class FramedArc extends ObjectDrawRectangularShape implements DrawableStr
     }
 
     public FramedArc(double x, double y, double width, double height, double startAngle, double arcAngle, DrawingCanvas canvas) {
-        this(x, y, width, height, startAngle, arcAngle, (Color)null, canvas);
+        this(x, y, width, height, startAngle, arcAngle, null, canvas);
     }
 
     public FramedArc(Location point, double width, double height, double startAngle, double arcAngle, Color color, DrawingCanvas canvas) {
@@ -33,7 +33,7 @@ public class FramedArc extends ObjectDrawRectangularShape implements DrawableStr
     }
 
     public FramedArc(Location point, double width, double height, double startAngle, double arcAngle, DrawingCanvas canvas) {
-        this(point, width, height, startAngle, arcAngle, (Color)null, canvas);
+        this(point, width, height, startAngle, arcAngle, null, canvas);
     }
 
     public FramedArc(Location corner1, Location corner2, double startAngle, double arcAngle, Color color, DrawingCanvas canvas) {
@@ -41,7 +41,7 @@ public class FramedArc extends ObjectDrawRectangularShape implements DrawableStr
     }
 
     public FramedArc(Location corner1, Location corner2, double startAngle, double arcAngle, DrawingCanvas canvas) {
-        this(corner1, corner2, startAngle, arcAngle, (Color)null, canvas);
+        this(corner1, corner2, startAngle, arcAngle, null, canvas);
     }
 
     public double getArcAngle() {
@@ -64,11 +64,11 @@ public class FramedArc extends ObjectDrawRectangularShape implements DrawableStr
 
     /** @deprecated */
     public Shape makeShape() {
-        return new Arc2D.Double(this.getDoubleX(), this.getDoubleY(), this.getDoubleWidth(), this.getDoubleHeight(), this.startAngle, this.arcAngle, 0);
+        return new Arc2D.Double(this.getDoubleX(), this.getDoubleY(), this.getDoubleWidth(), this.getDoubleHeight(), this.startAngle, this.arcAngle, Arc2D.OPEN);
     }
 
     public double getLineWidth() {
-        return (double)this.stroke.getLineWidth();
+        return this.stroke.getLineWidth();
     }
 
     public BasicStroke getStroke() {
@@ -212,7 +212,7 @@ public class FramedArc extends ObjectDrawRectangularShape implements DrawableStr
         double y = point.getDoubleY();
         double sa = this.startAngle * Math.PI / (double)180.0F;
 
-        for(double da = this.arcAngle * Math.PI / (double)180.0F; da > err; da /= (double)2.0F) {
+        for(double da = this.arcAngle * Math.PI / (double)180.0F; da > err; da /= 2.0F) {
             double ma = sa + da / (double)2.0F;
             double dx = cx + Math.cos(-ma) * w / (double)2.0F - x;
             double dy = cy + Math.sin(-ma) * h / (double)2.0F - y;

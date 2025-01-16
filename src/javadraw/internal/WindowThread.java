@@ -51,7 +51,7 @@ public class WindowThread extends Thread {
 
         try {
             Thread.sleep(millis, nanos);
-        } catch (InterruptedException var5) {
+        } catch (InterruptedException ignored) {
         }
 
         checkKilled();

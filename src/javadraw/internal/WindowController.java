@@ -76,7 +76,7 @@ public class WindowController extends Controller {
         while(this.canvas.getWidth() <= 0 || this.canvas.getHeight() <= 0) {
             try {
                 Thread.sleep(20L);
-            } catch (InterruptedException var2) {
+            } catch (InterruptedException ignored) {
             }
         }
 

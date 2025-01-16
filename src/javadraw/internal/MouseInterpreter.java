@@ -46,7 +46,7 @@ public class MouseInterpreter implements MouseListener, MouseMotionListener {
     private void mouseEvent(MouseEvent event, String type) {
         if (this.target != null) {
             ObjectDrawObject.deferUpdates();
-            Location point = new Location((double)event.getX(), (double)event.getY());
+            Location point = new Location(event.getX(), event.getY());
             int button = event.getButton();
             String methodName = "onMouse" + type;
 

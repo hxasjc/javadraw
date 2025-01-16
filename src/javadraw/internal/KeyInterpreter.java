@@ -15,10 +15,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class KeyInterpreter implements KeyListener {
-    private static HashMap codeNames;
-    private static HashMap keyCodes = buildKeyCodes();
+    private static HashMap<Integer, String> codeNames;
+    private static final HashMap<String, Integer> keyCodes = buildKeyCodes();
     private Object target;
-    private HashSet keysDown = new HashSet();
+    private final HashSet<Integer> keysDown = new HashSet<>();
     private Component canvas;
 
     public KeyInterpreter(Object target, DrawingCanvas canvas) {
@@ -48,17 +48,17 @@ public class KeyInterpreter implements KeyListener {
         return (DrawingCanvas)this.canvas;
     }
 
-    private static HashMap buildKeyCodes() {
-        HashMap keyCodes = new HashMap();
-        codeNames = new HashMap();
+    private static HashMap<String, Integer> buildKeyCodes() {
+        HashMap<String, Integer> keyCodes = new HashMap<>();
+        codeNames = new HashMap<>();
 
         try {
             Field[] fields = KeyEvent.class.getFields();
 
-            for(int i = 0; i < fields.length; ++i) {
-                if ((fields[i].getModifiers() & 8) != 0 && fields[i].getName().startsWith("VK_")) {
-                    String name = fields[i].getName().substring(3).toLowerCase();
-                    Integer value = (Integer)fields[i].get((Object)null);
+            for (Field field : fields) {
+                if ((field.getModifiers() & 8) != 0 && field.getName().startsWith("VK_")) {
+                    String name = field.getName().substring(3).toLowerCase();
+                    Integer value = (Integer) field.get(null);
                     keyCodes.put(name, value);
                     codeNames.put(value, name);
                 }
@@ -88,7 +88,7 @@ public class KeyInterpreter implements KeyListener {
     }
 
     private void keyEvent(KeyEvent event) {
-        Integer code = new Integer(event.getKeyCode());
+        int code = event.getKeyCode();
         if (this.target != null) {
             String type;
             if (event.getID() == 401) {
@@ -145,7 +145,7 @@ public class KeyInterpreter implements KeyListener {
                         method.invoke(this.target, key);
                     } catch (InvocationTargetException var18) {
                         e.getCause().printStackTrace();
-                    } catch (NoSuchMethodException var19) {
+                    } catch (NoSuchMethodException ignored) {
                     } catch (Exception var20) {
                         e.printStackTrace();
                     }
@@ -169,7 +169,7 @@ public class KeyInterpreter implements KeyListener {
                 method.invoke(this.target, key);
             } catch (InvocationTargetException e) {
                 e.getCause().printStackTrace();
-            } catch (Exception var10) {
+            } catch (Exception ignored) {
             } finally {
                 ObjectDrawObject.runUpdates();
             }

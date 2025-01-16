@@ -6,32 +6,31 @@
 package javadraw.internal;
 
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 class PathMeasurer {
-    private static HashMap segments = new HashMap();
+    private static final HashMap<Integer, Segment> segments = new HashMap<>();
     private static final double ACCURACY = 0.1;
 
     PathMeasurer() {
     }
 
     private static Segment getSegment(int type) {
-        return (Segment)segments.get(new Integer(type));
+        return segments.get(type);
     }
 
     static Point[] getPoints(Shape shape, double separation) {
-        return (new StrokeData(shape.getPathIterator((AffineTransform)null))).measure(separation);
+        return (new StrokeData(shape.getPathIterator(null))).measure(separation);
     }
 
     static {
-        segments.put(new Integer(4), new CloseSegment());
-        segments.put(new Integer(0), new MoveSegment());
-        segments.put(new Integer(1), new LineSegment());
-        segments.put(new Integer(2), new QuadraticSplineSegment());
-        segments.put(new Integer(3), new CubicSplineSegment());
+        segments.put(4, new CloseSegment());
+        segments.put(0, new MoveSegment());
+        segments.put(1, new LineSegment());
+        segments.put(2, new QuadraticSplineSegment());
+        segments.put(3, new CubicSplineSegment());
     }
 
     public static class Point {
@@ -68,17 +67,17 @@ class PathMeasurer {
         }
 
         public Point[] measure(double separation) {
-            this.startX = this.startY = this.currentX = this.currentY = this.currentOffset = (double)0.0F;
+            this.startX = this.startY = this.currentX = this.currentY = this.currentOffset = 0.0F;
 
-            ArrayList points;
-            for(points = new ArrayList(); !this.path.isDone(); this.path.next()) {
+            ArrayList<Point> points;
+            for(points = new ArrayList<>(); !this.path.isDone(); this.path.next()) {
                 Segment seg = PathMeasurer.getSegment(this.path.currentSegment(this.coordinates));
                 if (seg != null) {
                     seg.measure(points, this, separation);
                 }
             }
 
-            return (Point[])points.toArray(new Point[points.size()]);
+            return points.toArray(new Point[0]);
         }
     }
 
@@ -86,7 +85,7 @@ class PathMeasurer {
         private Segment() {
         }
 
-        public abstract void measure(ArrayList var1, StrokeData var2, double var3);
+        public abstract void measure(ArrayList<Point> var1, StrokeData var2, double var3);
     }
 
     private static class LineSegment extends Segment {
@@ -107,7 +106,7 @@ class PathMeasurer {
             return data.coordinates[1];
         }
 
-        public void measure(ArrayList points, StrokeData data, double separation) {
+        public void measure(ArrayList<Point> points, StrokeData data, double separation) {
             double length = this.length(data);
             if (length <= data.currentOffset) {
                 data.currentX = this.getEndX(data);
@@ -133,7 +132,7 @@ class PathMeasurer {
         private MoveSegment() {
         }
 
-        public void measure(ArrayList points, StrokeData data, double separation) {
+        public void measure(ArrayList<Point> points, StrokeData data, double separation) {
             data.currentX = data.startX = this.getEndX(data);
             data.currentY = data.startY = this.getEndY(data);
         }
@@ -168,15 +167,15 @@ class PathMeasurer {
 
         protected abstract void prepare(StrokeData var1);
 
-        public void measure(ArrayList points, StrokeData data, double sep) {
+        public void measure(ArrayList<Point> points, StrokeData data, double sep) {
             this.prepare(data);
-            double t = (double)0.0F;
+            double t = 0.0F;
             double x = data.currentX;
             double y = data.currentY;
             double error = sep * sep * 0.1 * 0.1;
             double[] stack = new double[300];
             int top = 0;
-            stack[0] = (double)1.0F;
+            stack[0] = 1.0F;
             stack[1] = this.getEndX(data);
             stack[2] = this.getEndY(data);
 

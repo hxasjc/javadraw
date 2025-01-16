@@ -9,7 +9,6 @@ import java.applet.AudioClip;
 import java.awt.Dimension;
 import java.awt.Image;
 import javax.swing.JApplet;
-import javax.swing.JComponent;
 
 public class Controller extends JApplet {
     private Dimension preferredSize;
@@ -45,7 +44,7 @@ public class Controller extends JApplet {
     }
 
     void setControllerSize(Dimension d) {
-        ((JComponent)this.getContentPane()).setPreferredSize(d);
+        this.getContentPane().setPreferredSize(d);
     }
 
     public void startController(int width, int height, String name) {
@@ -68,7 +67,7 @@ public class Controller extends JApplet {
     static {
         try {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
-        } catch (Exception var1) {
+        } catch (Exception ignored) {
         }
 
     }

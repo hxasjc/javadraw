@@ -22,7 +22,7 @@ public class FilledArc extends ObjectDrawRectangularShape implements Serializabl
     }
 
     public FilledArc(double x, double y, double width, double height, double startAngle, double arcAngle, DrawingCanvas canvas) {
-        this(x, y, width, height, startAngle, arcAngle, (Color)null, canvas);
+        this(x, y, width, height, startAngle, arcAngle, null, canvas);
     }
 
     public FilledArc(Location point, double width, double height, double startAngle, double arcAngle, Color color, DrawingCanvas canvas) {
@@ -30,7 +30,7 @@ public class FilledArc extends ObjectDrawRectangularShape implements Serializabl
     }
 
     public FilledArc(Location point, double width, double height, double startAngle, double arcAngle, DrawingCanvas canvas) {
-        this(point, width, height, startAngle, arcAngle, (Color)null, canvas);
+        this(point, width, height, startAngle, arcAngle, null, canvas);
     }
 
     public FilledArc(Location corner1, Location corner2, double startAngle, double arcAngle, Color color, DrawingCanvas canvas) {
@@ -38,7 +38,7 @@ public class FilledArc extends ObjectDrawRectangularShape implements Serializabl
     }
 
     public FilledArc(Location corner1, Location corner2, double startAngle, double arcAngle, DrawingCanvas canvas) {
-        this(corner1, corner2, startAngle, arcAngle, (Color)null, canvas);
+        this(corner1, corner2, startAngle, arcAngle, null, canvas);
     }
 
     public double getArcAngle() {
@@ -61,7 +61,7 @@ public class FilledArc extends ObjectDrawRectangularShape implements Serializabl
 
     /** @deprecated */
     public Shape makeShape() {
-        return new Arc2D.Double(this.getDoubleX(), this.getDoubleY(), this.getDoubleWidth(), this.getDoubleHeight(), this.startAngle, this.arcAngle, 2);
+        return new Arc2D.Double(this.getDoubleX(), this.getDoubleY(), this.getDoubleWidth(), this.getDoubleHeight(), this.startAngle, this.arcAngle, Arc2D.PIE);
     }
 
     public void setSize(double width, double height) {
@@ -76,68 +76,9 @@ public class FilledArc extends ObjectDrawRectangularShape implements Serializabl
         super.setHeight(h);
     }
 
-    public int getX() {
-        return super.getX();
-    }
-
-    public int getY() {
-        return super.getY();
-    }
-
-    public double getDoubleX() {
-        return super.getDoubleX();
-    }
-
-    public double getDoubleY() {
-        return super.getDoubleY();
-    }
-
-    public Location getLocation() {
-        return super.getLocation();
-    }
-
-    public int getWidth() {
-        return super.getWidth();
-    }
-
-    public int getHeight() {
-        return super.getHeight();
-    }
-
-    public double getDoubleWidth() {
-        return super.getDoubleWidth();
-    }
-
-    public double getDoubleHeight() {
-        return super.getDoubleHeight();
-    }
-
-    public boolean overlaps(Drawable2DInterface other) {
-        return super.overlaps(other);
-    }
-
-    public void hide() {
-        super.hide();
-    }
-
-    public void show() {
-        super.show();
-    }
-
-    public boolean isHidden() {
-        return super.isHidden();
-    }
 
     public void addToCanvas(DrawingCanvas c) {
         super.addToCanvas(c);
-    }
-
-    public void removeFromCanvas() {
-        super.removeFromCanvas();
-    }
-
-    public DrawingCanvas getCanvas() {
-        return super.getCanvas();
     }
 
     public void moveTo(Location point) {
@@ -152,32 +93,12 @@ public class FilledArc extends ObjectDrawRectangularShape implements Serializabl
         super.move(dx, dy);
     }
 
-    public Color getColor() {
-        return super.getColor();
-    }
-
     public void setColor(Color c) {
         super.setColor(c);
     }
 
     public void setColor(Color c, float a) {
         super.setColor(c, a);
-    }
-
-    public void sendForward() {
-        super.sendForward();
-    }
-
-    public void sendBackward() {
-        super.sendBackward();
-    }
-
-    public void sendToFront() {
-        super.sendToFront();
-    }
-
-    public void sendToBack() {
-        super.sendToBack();
     }
 
     public boolean contains(Location point) {

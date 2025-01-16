@@ -21,14 +21,6 @@ public class ActiveObject extends Thread {
 
     }
 
-    public void run() {
-        super.run();
-    }
-
-    public void start() {
-        super.start();
-    }
-
     public void kill() {
         this.killed = true;
         this.interrupt();

@@ -13,8 +13,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -27,16 +25,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 /** @deprecated */
 public class ControllerFrame extends JFrame implements AppletStub, AppletContext {
-    private static ArrayList frames = new ArrayList();
+    private static final ArrayList<ControllerFrame> frames = new ArrayList<>();
     private static boolean showingRulers = false;
     private static boolean showingGrids = false;
     private static final Color RULER_COLOR = new Color(50, 50, 50);
@@ -45,7 +38,7 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
     private static final Color TICK_COLOR;
     private Controller applet;
     private boolean active = false;
-    private HashMap streams = new HashMap();
+    private final HashMap<String, InputStream> streams = new HashMap<>();
     private int width;
     private int height;
     private MouseInterpreter key;
@@ -66,8 +59,8 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
         if (showingRulers != show) {
             showingRulers = show;
 
-            for(int i = 0; i < frames.size(); ++i) {
-                ControllerFrame frame = (ControllerFrame)frames.get(i);
+            for (ControllerFrame controllerFrame : frames) {
+                ControllerFrame frame = (ControllerFrame) controllerFrame;
                 if (frame.applet instanceof WindowController) {
                     if (show) {
                         frame.showRulers();
@@ -86,10 +79,10 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
         if (showingGrids != show) {
             showingGrids = show;
 
-            for(int i = 0; i < frames.size(); ++i) {
-                ControllerFrame frame = (ControllerFrame)frames.get(i);
+            for (ControllerFrame controllerFrame : frames) {
+                ControllerFrame frame = (ControllerFrame) controllerFrame;
                 if (frame.applet instanceof WindowController) {
-                    WindowController controller = (WindowController)frame.applet;
+                    WindowController controller = (WindowController) frame.applet;
                     if (show) {
                         controller.setGridVisible(true);
                     } else {
@@ -107,7 +100,7 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
         super(title);
         this.applet = myController;
         this.getContentPane().add(this.applet, "Center");
-        this.setDefaultCloseOperation(2);
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.buildMenus();
         this.addWindowListener(new WindowAdapter() {
             public void windowActivated(WindowEvent e) {
@@ -128,13 +121,11 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
         this.active = true;
         frames.add(this);
         Network.frameCreated(this);
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                ControllerFrame.this.pack();
-                ControllerFrame.this.setVisible(true);
-                ControllerFrame.this.applet.init();
-                ControllerFrame.this.applet.start();
-            }
+        SwingUtilities.invokeLater(() -> {
+            ControllerFrame.this.pack();
+            ControllerFrame.this.setVisible(true);
+            ControllerFrame.this.applet.init();
+            ControllerFrame.this.applet.start();
         });
     }
 
@@ -147,8 +138,8 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
         boolean mac = false;
 
         try {
-            mac = System.getProperty("os.name").indexOf("Mac") != -1;
-        } catch (SecurityException var5) {
+            mac = System.getProperty("os.name").contains("Mac");
+        } catch (SecurityException ignored) {
         }
 
         JMenuBar menuBar = new JMenuBar();
@@ -156,15 +147,13 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
             JMenu menu = new JMenu("File");
             menuBar.add(menu);
             JMenuItem quit = new JMenuItem("Exit");
-            quit.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    ControllerFrame.this.active = false;
-                    ControllerFrame.this.applet.stop();
-                    ControllerFrame.this.applet.destroy();
-                    ControllerFrame.this.hide();
-                    ControllerFrame.this.dispose();
-                    System.exit(0);
-                }
+            quit.addActionListener(e -> {
+                ControllerFrame.this.active = false;
+                ControllerFrame.this.applet.stop();
+                ControllerFrame.this.applet.destroy();
+                ControllerFrame.this.hide();
+                ControllerFrame.this.dispose();
+                System.exit(0);
             });
             menu.add(quit);
         }
@@ -173,18 +162,10 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
             JMenu viewMenu = new JMenu("View");
             menuBar.add(viewMenu);
             this.rulersItem = new JCheckBoxMenuItem("Show Rulers", showingRulers);
-            this.rulersItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    ControllerFrame.setRulers(!ControllerFrame.showingRulers);
-                }
-            });
+            this.rulersItem.addActionListener(e -> ControllerFrame.setRulers(!ControllerFrame.showingRulers));
             viewMenu.add(this.rulersItem);
             this.gridItem = new JCheckBoxMenuItem("Show Grid", showingGrids);
-            this.gridItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    ControllerFrame.setGrids(!ControllerFrame.showingGrids);
-                }
-            });
+            this.gridItem.addActionListener(e -> ControllerFrame.setGrids(!ControllerFrame.showingGrids));
             viewMenu.add(this.gridItem);
             ((WindowController)this.applet).setGridVisible(showingGrids);
             ((WindowController)this.applet).setRulersVisible(showingRulers);
@@ -230,7 +211,7 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
         return this.applet;
     }
 
-    public Enumeration getApplets() {
+    public Enumeration<Applet> getApplets() {
         return new AppletEnumerator();
     }
 
@@ -246,7 +227,7 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
         return (InputStream)this.streams.get(key);
     }
 
-    public Iterator getStreamKeys() {
+    public Iterator<String> getStreamKeys() {
         return this.streams.keySet().iterator();
     }
 
@@ -267,33 +248,31 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
         TICK_COLOR = Color.BLUE;
         Preferences prefs = Preferences.userRoot().node("/com/featuredspace/coffeedraw");
         String p = prefs.get("view", "");
-        showingRulers = p.indexOf("R") != -1;
-        showingGrids = p.indexOf("G") != -1;
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                Preferences prefs = Preferences.userRoot().node("/com/featuredspace/coffeedraw");
-                prefs.put("view", ControllerFrame.showingRulers ? (ControllerFrame.showingGrids ? "RG" : "R") : (ControllerFrame.showingGrids ? "G" : ""));
+        showingRulers = p.contains("R");
+        showingGrids = p.contains("G");
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            Preferences prefs1 = Preferences.userRoot().node("/com/featuredspace/coffeedraw");
+            prefs1.put("view", ControllerFrame.showingRulers ? (ControllerFrame.showingGrids ? "RG" : "R") : (ControllerFrame.showingGrids ? "G" : ""));
 
-                try {
-                    prefs.flush();
-                } catch (BackingStoreException var3) {
-                }
-
+            try {
+                prefs1.flush();
+            } catch (BackingStoreException ignored) {
             }
-        });
+
+        }));
     }
 
-    private static class AppletEnumerator implements Enumeration {
-        private ArrayList framesCopy;
+    private static class AppletEnumerator implements Enumeration<Applet> {
+        private ArrayList<ControllerFrame> framesCopy;
         private int index;
 
         public AppletEnumerator() {
-            this.framesCopy = new ArrayList(ControllerFrame.frames);
+            this.framesCopy = new ArrayList<>(ControllerFrame.frames);
             this.index = 0;
         }
 
-        public Object nextElement() {
-            return this.hasMoreElements() ? ((ControllerFrame)ControllerFrame.frames.get(this.index++)).applet : null;
+        public Controller nextElement() {
+            return this.hasMoreElements() ? ControllerFrame.frames.get(this.index++).applet : null;
         }
 
         public boolean hasMoreElements() {

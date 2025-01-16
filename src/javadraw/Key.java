@@ -4,7 +4,6 @@ import javadraw.errors.InvalidArgumentException;
 import javadraw.internal.SneakyThrow;
 
 import java.lang.reflect.Field;
-import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -84,7 +83,7 @@ public class Key {
     public static final Key LEFT = new Key("Left");
     public static final Key RIGHT = new Key("Right");
 
-    String character;
+    final String character;
     public Key(String character) {
         this.character = character;
     }

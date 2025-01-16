@@ -11,9 +11,9 @@ import java.util.LinkedList;
 
 /** @deprecated */
 public class ObjectDrawObject implements Dependent, Serializable {
-    private static LinkedList notify = new LinkedList();
+    private static final LinkedList<Dependent> notify = new LinkedList<>();
     private static boolean defer = false;
-    HashSet<Dependent> dependents = new HashSet();
+    HashSet<Dependent> dependents = new HashSet<>();
 
     public ObjectDrawObject() {
     }

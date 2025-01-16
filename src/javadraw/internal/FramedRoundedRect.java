@@ -25,7 +25,7 @@ public class FramedRoundedRect extends ObjectDrawRectangularShape implements Dra
     }
 
     public FramedRoundedRect(double x, double y, double width, double height, double arcWidth, double arcHeight, DrawingCanvas canvas) {
-        this(x, y, width, height, arcWidth, arcHeight, (Color)null, canvas);
+        this(x, y, width, height, arcWidth, arcHeight, null, canvas);
     }
 
     public FramedRoundedRect(Location point, double width, double height, double arcWidth, double arcHeight, Color color, DrawingCanvas canvas) {
@@ -33,7 +33,7 @@ public class FramedRoundedRect extends ObjectDrawRectangularShape implements Dra
     }
 
     public FramedRoundedRect(Location point, double width, double height, double arcWidth, double arcHeight, DrawingCanvas canvas) {
-        this(point, width, height, arcWidth, arcHeight, (Color)null, canvas);
+        this(point, width, height, arcWidth, arcHeight, null, canvas);
     }
 
     public FramedRoundedRect(Location corner1, Location corner2, double arcWidth, double arcHeight, Color color, DrawingCanvas canvas) {
@@ -41,7 +41,7 @@ public class FramedRoundedRect extends ObjectDrawRectangularShape implements Dra
     }
 
     public FramedRoundedRect(Location corner1, Location corner2, double arcWidth, double arcHeight, DrawingCanvas canvas) {
-        this(corner1, corner2, arcWidth, arcHeight, (Color)null, canvas);
+        this(corner1, corner2, arcWidth, arcHeight, null, canvas);
     }
 
     public int getArcHeight() {
@@ -76,7 +76,7 @@ public class FramedRoundedRect extends ObjectDrawRectangularShape implements Dra
     }
 
     public double getLineWidth() {
-        return (double)this.stroke.getLineWidth();
+        return this.stroke.getLineWidth();
     }
 
     public BasicStroke getStroke() {

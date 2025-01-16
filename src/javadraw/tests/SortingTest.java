@@ -50,14 +50,14 @@ public class SortingTest extends Window {
             }
 
             if(x + shape.width() > screen.width() - 10) {
-                y += maxHeight + 10;
+                y += (int) (maxHeight + 10);
                 x = 10;
             }
 
             // shape.moveTo(x, y);
             locations[i] = new Location(x, y);
 
-            x += shape.width() + 10;
+            x += (int) (shape.width() + 10);
         }
 
         // Quick little Linear Animation

@@ -22,17 +22,17 @@ public class FramedPolygon extends ObjectDrawPolygon implements Polygon, Seriali
     }
 
     public FramedPolygon(int numSides, double x, double y, double width, double height, double rotation, DrawingCanvas canvas) {
-        super(numSides, x, y, width, height, rotation, false, (Color)null, canvas);
+        super(numSides, x, y, width, height, rotation, false, null, canvas);
         this.numSides = numSides;
         this.ready();
     }
 
     public FramedPolygon(int numSides, double x, double y, double width, double height, DrawingCanvas canvas) {
-        this(numSides, x, y, width, height, (double)0.0F, canvas);
+        this(numSides, x, y, width, height, 0.0F, canvas);
     }
 
     public FramedPolygon(int numSides, Location startLoc, double width, double height, DrawingCanvas canvas) {
-        this(numSides, (double)startLoc.getX(), (double)startLoc.getY(), width, height, canvas);
+        this(numSides, startLoc.getX(), startLoc.getY(), width, height, canvas);
     }
 
     public FramedPolygon(int numSides, Location loc, double width, double height, double rotation, Color color, DrawingCanvas canvas) {
@@ -44,9 +44,9 @@ public class FramedPolygon extends ObjectDrawPolygon implements Polygon, Seriali
     }
 
     public Shape makeShape() {
-        ArrayList<Location> points = new ArrayList();
+        ArrayList<Location> points = new ArrayList<>();
         double radius = this.getDoubleWidth() / (double)2.0F;
-        double angle = (double)(180 - 360 / this.getSides());
+        double angle = 180 - (double) 360 / this.getSides();
         double theta = (Math.PI * 2D) / (double)this.getSides();
         angle = theta;
         Location startLoc = new Location((double)this.getX() + this.getDoubleWidth() / (double)2.0F, (double)this.getY() + this.getDoubleHeight() / (double)2.0F);
@@ -71,9 +71,15 @@ public class FramedPolygon extends ObjectDrawPolygon implements Polygon, Seriali
         int diameter = 20;
         int radius = diameter / 2;
         double theta = (Math.PI * 2D) / (double)this.getSides();
-        List<Location> points = this.regular ? new ArrayList() : (ArrayList)Arrays.asList(this.getPoints());
+        ArrayList<Location> points;
         if (this.regular) {
-            List<Location> locations = new ArrayList();
+            points = new ArrayList<>();
+        } else {
+            points = (ArrayList<Location>) Arrays.asList(this.getPoints());
+        }
+
+        if (this.regular) {
+            List<Location> locations = new ArrayList<>();
 
             for(int i = 0; i < this.numSides; ++i) {
                 locations.add(new Location((double)radius * Math.sin((Math.PI * 2D) / (double)this.numSides * (double)i), (double)radius * Math.cos((Math.PI * 2D) / (double)this.numSides * (double)i)));
@@ -81,7 +87,7 @@ public class FramedPolygon extends ObjectDrawPolygon implements Polygon, Seriali
 
             double scaleFactorX = this.getDoubleWidth() / (double)diameter;
             double scaleFactorY = this.getDoubleHeight() / (double)diameter;
-            List<Location> points2 = new ArrayList();
+            ArrayList<Location> points2 = new ArrayList<>();
 
             for(Location point : locations) {
                 double newX = scaleFactorX * point.getDoubleX();

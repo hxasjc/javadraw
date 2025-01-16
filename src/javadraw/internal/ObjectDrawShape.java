@@ -27,7 +27,7 @@ public abstract class ObjectDrawShape extends ObjectDrawObject implements Drawab
     private double angle;
     public boolean ROTATE_FLAG = true;
     static final Color DEFAULT_COLOR;
-    private static HashMap canvases;
+    private static HashMap<DrawingCanvas, ArrayList<DrawableInterface>> canvases;
 
     public ObjectDrawShape(Location l, boolean f, Color c, DrawingCanvas canvas) {
         this.filled = f;
@@ -56,11 +56,7 @@ public abstract class ObjectDrawShape extends ObjectDrawObject implements Drawab
         if (!this.ready) {
             this.ready = true;
             if (this.canvas != null) {
-                ArrayList list = (ArrayList)canvases.get(this.canvas);
-                if (list == null) {
-                    list = new ArrayList();
-                    canvases.put(this.canvas, list);
-                }
+                ArrayList<DrawableInterface> list = canvases.computeIfAbsent(this.canvas, k -> new ArrayList<>());
 
                 list.add(this);
                 this.depend(this.canvas);
@@ -114,7 +110,7 @@ public abstract class ObjectDrawShape extends ObjectDrawObject implements Drawab
 
     /** @deprecated */
     public static DrawableIterator getDrawables(DrawingCanvas canvas) {
-        return new DrawableIterator((ArrayList)canvases.get(canvas));
+        return new DrawableIterator((ArrayList<DrawableInterface>)canvases.get(canvas));
     }
 
     /** @deprecated */
@@ -203,7 +199,7 @@ public abstract class ObjectDrawShape extends ObjectDrawObject implements Drawab
         if (this.shape != null && this.location != null && g != null) {
             try {
                 g.rotate(Math.toRadians(this.angle), this.location.getDoubleX() + this.shape.getBounds2D().getWidth() / (double)2.0F, this.location.getDoubleY() + this.shape.getBounds2D().getHeight() / (double)2.0F);
-            } catch (NullPointerException var3) {
+            } catch (NullPointerException ignored) {
             }
         }
 
@@ -226,7 +222,7 @@ public abstract class ObjectDrawShape extends ObjectDrawObject implements Drawab
 
         while(d.hasNext()) {
             ObjectDrawShape di = (ObjectDrawShape)d.next();
-            di.setCanvas((DrawingCanvas)null);
+            di.setCanvas(null);
         }
 
     }
@@ -241,7 +237,7 @@ public abstract class ObjectDrawShape extends ObjectDrawObject implements Drawab
     private void setCanvas(DrawingCanvas c) {
         if (this.canvas != null) {
             this.undepend(this.canvas);
-            ArrayList list = (ArrayList)canvases.get(this.canvas);
+            ArrayList<DrawableInterface> list = canvases.get(this.canvas);
             if (list != null) {
                 list.remove(this);
             }
@@ -250,11 +246,7 @@ public abstract class ObjectDrawShape extends ObjectDrawObject implements Drawab
         }
 
         if (c != null) {
-            ArrayList list = (ArrayList)canvases.get(c);
-            if (list == null) {
-                list = new ArrayList();
-                canvases.put(c, list);
-            }
+            ArrayList<DrawableInterface> list = canvases.computeIfAbsent(c, k -> new ArrayList<>());
 
             list.add(this);
             this.depend(c);
@@ -320,16 +312,16 @@ public abstract class ObjectDrawShape extends ObjectDrawObject implements Drawab
     }
 
     public void removeFromCanvas() {
-        this.setCanvas((DrawingCanvas)null);
+        this.setCanvas(null);
     }
 
     private int getDrawOrder() {
-        return this.canvas == null ? -1 : ((ArrayList)canvases.get(this.canvas)).indexOf(this);
+        return this.canvas == null ? -1 : canvases.get(this.canvas).indexOf(this);
     }
 
     private void setDrawOrder(int pos) {
         if (this.canvas != null) {
-            ArrayList list = (ArrayList)canvases.get(this.canvas);
+            ArrayList<DrawableInterface> list = canvases.get(this.canvas);
             if (pos != -2 && pos < list.size()) {
                 if (pos < 0) {
                     pos = 0;
@@ -381,15 +373,13 @@ public abstract class ObjectDrawShape extends ObjectDrawObject implements Drawab
         try {
             Field[] fields = Color.class.getDeclaredFields();
 
-            for(int i = 0; i < fields.length; ++i) {
-                Field f = fields[i];
+            for (Field f : fields) {
                 char start = f.getName().charAt(0);
-                if (start >= 'A' && start <= 'Z' && c.equals(f.get((Object)null))) {
+                if (start >= 'A' && start <= 'Z' && c.equals(f.get(null))) {
                     return "Color." + f.getName();
                 }
             }
-        } catch (IllegalArgumentException var6) {
-        } catch (IllegalAccessException var7) {
+        } catch (IllegalArgumentException | IllegalAccessException ignored) {
         }
 
         return "new Color(" + c.getRed() + ", " + c.getGreen() + ", " + c.getBlue() + (c.getAlpha() == 255 ? "" : ", " + this.getColor().getAlpha()) + ")";
@@ -402,6 +392,6 @@ public abstract class ObjectDrawShape extends ObjectDrawObject implements Drawab
 
     static {
         DEFAULT_COLOR = Color.BLACK;
-        canvases = new HashMap();
+        canvases = new HashMap<>();
     }
 }

@@ -8,8 +8,8 @@ package javadraw.internal;
 import java.awt.BasicStroke;
 
 public interface DrawableStrokeInterface {
-    BasicStroke DEFAULT_STROKE = new BasicStroke(2.0F, 1, 1);
-    double CLICK_SIZE = (double)4.0F;
+    BasicStroke DEFAULT_STROKE = new BasicStroke(2.0F, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    double CLICK_SIZE = 4.0F;
 
     double getLineWidth();
 

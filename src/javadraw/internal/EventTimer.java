@@ -11,13 +11,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import javax.swing.Timer;
 
 public class EventTimer {
     public static final Object SELF = new Object();
-    private static final Set activeTimers = Collections.synchronizedSet(new HashSet());
+    private static final Set<EventTimer> activeTimers = Collections.synchronizedSet(new HashSet<>());
     private Timer timer;
     private Object[] args;
     private Object target;
@@ -29,10 +28,9 @@ public class EventTimer {
 
     public static void stopAll() {
         synchronized(activeTimers) {
-            Iterator iter = activeTimers.iterator();
 
-            while(iter.hasNext()) {
-                ((EventTimer)iter.next()).timer.stop();
+            for (EventTimer activeTimer : activeTimers) {
+                activeTimer.timer.stop();
             }
 
             activeTimers.clear();
@@ -71,9 +69,9 @@ public class EventTimer {
                 Class targetClass = target instanceof Class ? (Class)target : target.getClass();
                 Method[] methods = targetClass.getMethods();
 
-                for(int i = 0; i < methods.length; ++i) {
-                    if (matches(methods[i], methodName, types)) {
-                        this.method = methods[i];
+                for (Method value : methods) {
+                    if (matches(value, methodName, types)) {
+                        this.method = value;
                         this.target = target;
                         this.args = args;
                         this.timer = new Timer(1000, this.listener);
@@ -86,7 +84,7 @@ public class EventTimer {
             }
 
             if (this.method == null) {
-                StringBuffer error = new StringBuffer();
+                StringBuilder error = new StringBuilder();
                 error.append("Unable to locate method: public void ");
                 error.append(methodName);
                 error.append("(");
@@ -105,7 +103,7 @@ public class EventTimer {
         }
     }
 
-    private static boolean matches(Method method, String methodName, Class[] types) {
+    private static boolean matches(Method method, String methodName, Class<?>[] types) {
         if (!method.getName().equals(methodName)) {
             return false;
         } else {
@@ -148,26 +146,26 @@ public class EventTimer {
                 Number n = (Number)values[i];
                 if (params[i] == Byte.TYPE) {
                     if (!(values[i] instanceof Byte)) {
-                        values[i] = new Byte(n.byteValue());
+                        values[i] = n.byteValue();
                     }
                 } else if (params[i] == Short.TYPE) {
                     if (!(values[i] instanceof Short)) {
-                        values[i] = new Short(n.shortValue());
+                        values[i] = n.shortValue();
                     }
                 } else if (params[i] == Integer.TYPE) {
                     if (!(values[i] instanceof Integer)) {
-                        values[i] = new Integer(n.intValue());
+                        values[i] = n.intValue();
                     }
                 } else if (params[i] == Long.TYPE) {
                     if (!(values[i] instanceof Long)) {
-                        values[i] = new Long(n.longValue());
+                        values[i] = n.longValue();
                     }
                 } else if (params[i] == Float.TYPE) {
                     if (!(values[i] instanceof Float)) {
-                        values[i] = new Float(n.floatValue());
+                        values[i] = n.floatValue();
                     }
                 } else if (params[i] == Double.TYPE && !(values[i] instanceof Double)) {
-                    values[i] = new Double(n.doubleValue());
+                    values[i] = n.doubleValue();
                 }
             }
         }
@@ -272,7 +270,7 @@ public class EventTimer {
         }
 
         if (startDelay < (double)0.0F) {
-            startDelay = (double)0.0F;
+            startDelay = 0.0F;
         }
 
         this.timer.setInitialDelay((int)(startDelay * (double)1000.0F + (double)0.5F));
@@ -337,8 +335,7 @@ public class EventTimer {
             if (this.method != null) {
                 this.method.invoke(this.target, this.args);
             }
-        } catch (IllegalArgumentException var7) {
-        } catch (IllegalAccessException var8) {
+        } catch (IllegalArgumentException | IllegalAccessException ignored) {
         } catch (InvocationTargetException e) {
             e.getCause().printStackTrace();
         } finally {

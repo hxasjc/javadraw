@@ -8,12 +8,12 @@ package javadraw.internal;
 import java.util.ArrayList;
 
 public class DrawableIterator {
-    private ArrayList list;
+    private ArrayList<DrawableInterface> list;
     private int index;
 
-    protected DrawableIterator(ArrayList drawables) {
+    protected DrawableIterator(ArrayList<DrawableInterface> drawables) {
         if (drawables != null) {
-            this.list = new ArrayList(drawables);
+            this.list = new ArrayList<>(drawables);
         }
 
     }

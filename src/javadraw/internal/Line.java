@@ -26,16 +26,16 @@ public class Line extends ObjectDrawShape implements Drawable1DInterface, Drawab
         super(new Location(x1, y1), false, color, canvas);
         this.end = new Location(x2, y2);
         this.end.depend(this);
-        this.stroke = new BasicStroke(thickness, 1, 1);
+        this.stroke = new BasicStroke(thickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         this.ready();
     }
 
     public Line(double x1, double y1, double x2, double y2, float thickness, DrawingCanvas canvas) {
-        this(x1, y1, x2, y2, thickness, (Color)null, canvas);
+        this(x1, y1, x2, y2, thickness, null, canvas);
     }
 
     public Line(double x1, double y1, double x2, double y2, DrawingCanvas canvas) {
-        this(x1, y1, x2, y2, (Color)null, canvas);
+        this(x1, y1, x2, y2, null, canvas);
     }
 
     public Line(Location start, Location end, Color color, DrawingCanvas canvas) {
@@ -43,7 +43,7 @@ public class Line extends ObjectDrawShape implements Drawable1DInterface, Drawab
     }
 
     public Line(Location start, Location end, DrawingCanvas canvas) {
-        this(start, end, (Color)null, canvas);
+        this(start, end, null, canvas);
     }
 
     /** @deprecated */
@@ -53,7 +53,7 @@ public class Line extends ObjectDrawShape implements Drawable1DInterface, Drawab
     }
 
     public double getLineWidth() {
-        return (double)this.stroke.getLineWidth();
+        return this.stroke.getLineWidth();
     }
 
     public BasicStroke getStroke() {

@@ -16,25 +16,9 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import javax.swing.AbstractAction;
-import javax.swing.AbstractListModel;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.ListDataEvent;
@@ -51,7 +35,7 @@ public class Network {
     static int gamePort = 21504;
     private static JDialog hostDialog = null;
     private static JDialog joinDialog = null;
-    private static final ArrayList framesNeedingMenu = new ArrayList();
+    private static final ArrayList<ControllerFrame> framesNeedingMenu = new ArrayList<>();
     private static final Action hostAction = new AbstractAction("Host network game") {
         public void actionPerformed(ActionEvent e) {
             Network.openHostDialog();
@@ -95,14 +79,12 @@ public class Network {
             gameIdentifier = game;
             serverListener = server;
             clientListener = client;
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    for(int i = 0; i < Network.framesNeedingMenu.size(); ++i) {
-                        Network.addMenuToFrame((ControllerFrame)Network.framesNeedingMenu.get(i));
-                    }
-
-                    Network.framesNeedingMenu.clear();
+            SwingUtilities.invokeLater(() -> {
+                for(int i = 0; i < Network.framesNeedingMenu.size(); ++i) {
+                    Network.addMenuToFrame((ControllerFrame)Network.framesNeedingMenu.get(i));
                 }
+
+                Network.framesNeedingMenu.clear();
             });
         }
     }
@@ -112,19 +94,11 @@ public class Network {
     }
 
     static void closeServer(Server server) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                Network.hostAction.setEnabled(true);
-            }
-        });
+        SwingUtilities.invokeLater(() -> Network.hostAction.setEnabled(true));
     }
 
     static void closeClient(Client client) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                Network.joinAction.setEnabled(true);
-            }
-        });
+        SwingUtilities.invokeLater(() -> Network.joinAction.setEnabled(true));
     }
 
     public static void startServer(String name) {
@@ -133,7 +107,7 @@ public class Network {
         } else if (!hostAction.isEnabled()) {
             throw new IllegalStateException("You may only have one server running at a time.");
         } else {
-            startServer(name, (Runnable)null);
+            startServer(name, null);
         }
     }
 
@@ -178,20 +152,20 @@ public class Network {
         JDialog dialog = new JDialog();
         dialog.setTitle((String)hostAction.getValue("Name"));
         dialog.setModal(true);
-        dialog.setDefaultCloseOperation(1);
+        dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         JPanel content = new JPanel();
         dialog.setContentPane(content);
         content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        content.setLayout(new BoxLayout(content, 1));
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         JPanel namePanel = new JPanel();
-        namePanel.setLayout(new BoxLayout(namePanel, 0));
+        namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.X_AXIS));
         namePanel.add(new JLabel("Game name: "));
         JTextField gameName = new JTextField();
         namePanel.add(gameName);
         content.add(namePanel);
         content.add(Box.createVerticalStrut(10));
         JPanel joinPanel = new JPanel();
-        joinPanel.setLayout(new BoxLayout(joinPanel, 0));
+        joinPanel.setLayout(new BoxLayout(joinPanel, BoxLayout.X_AXIS));
         JCheckBox joinBox = new JCheckBox("Also join as: ");
         joinBox.setSelected(true);
         joinPanel.add(joinBox);
@@ -200,7 +174,7 @@ public class Network {
         content.add(joinPanel);
         content.add(Box.createVerticalStrut(20));
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, 0));
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.add(Box.createHorizontalStrut(150));
         JButton cancel = new JButton("Cancel");
         buttonPanel.add(cancel);
@@ -225,23 +199,23 @@ public class Network {
         JDialog dialog = new JDialog();
         dialog.setTitle((String)hostAction.getValue("Name"));
         dialog.setModal(true);
-        dialog.setDefaultCloseOperation(1);
+        dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         JPanel content = new JPanel();
         dialog.setContentPane(content);
         content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        content.setLayout(new BoxLayout(content, 1));
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         JList hostList = new JList();
         content.add(new JScrollPane(hostList));
         content.add(Box.createVerticalStrut(10));
         JPanel namePanel = new JPanel();
-        namePanel.setLayout(new BoxLayout(namePanel, 0));
+        namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.X_AXIS));
         namePanel.add(new JLabel("Join as: "));
         JTextField joinName = new JTextField();
         namePanel.add(joinName);
         content.add(namePanel);
         content.add(Box.createVerticalStrut(20));
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, 0));
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.add(Box.createHorizontalStrut(150));
         JButton cancel = new JButton("Cancel");
         buttonPanel.add(cancel);
@@ -305,7 +279,7 @@ public class Network {
         }
 
         private void checkCanJoin() {
-            this.host.setEnabled(this.gameName.getText().length() > 0 && (!this.joinBox.isSelected() || this.joinName.getText().length() > 0));
+            this.host.setEnabled(!this.gameName.getText().isEmpty() && (!this.joinBox.isSelected() || !this.joinName.getText().isEmpty()));
         }
 
         public void caretUpdate(CaretEvent e) {
@@ -325,11 +299,7 @@ public class Network {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == this.host) {
                 final String joinAs = this.joinName.getText();
-                Runnable onLoad = !this.joinBox.isSelected() ? null : new Runnable() {
-                    public void run() {
-                        Network.connectToServer("127.0.0.1", joinAs);
-                    }
-                };
+                Runnable onLoad = !this.joinBox.isSelected() ? null : () -> Network.connectToServer("127.0.0.1", joinAs);
                 Network.startServer(this.gameName.getText(), onLoad);
             }
 
@@ -337,7 +307,7 @@ public class Network {
         }
 
         public void itemStateChanged(ItemEvent e) {
-            if (e.getStateChange() == 1) {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
                 this.joinName.setEnabled(true);
             } else {
                 this.joinName.setText("");
@@ -353,7 +323,7 @@ public class Network {
         private static final int SERVER_TIMEOUT = 1000;
         private final DatagramPacket dgram = new DatagramPacket(new byte[256], 256);
         private final MulticastSocket socket;
-        private final ArrayList discoveries = new ArrayList();
+        private final ArrayList<Discovery> discoveries = new ArrayList<>();
         private boolean cancelled = false;
 
         public DiscoveryThread() throws IOException {
@@ -365,7 +335,7 @@ public class Network {
             try {
                 for(; !this.cancelled; this.dgram.setLength(256)) {
                     this.socket.receive(this.dgram);
-                    String message = new String(this.dgram.getData(), this.dgram.getOffset(), this.dgram.getLength(), "ISO-8859-1");
+                    String message = new String(this.dgram.getData(), this.dgram.getOffset(), this.dgram.getLength(), StandardCharsets.ISO_8859_1);
                     String serverName = message.substring(0, message.indexOf(10));
                     String gameName = message.substring(message.lastIndexOf(10) + 1);
                     if (gameName.equals(Network.gameIdentifier)) {
@@ -377,11 +347,7 @@ public class Network {
             }
 
             this.cancelled = false;
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    DiscoveryThread.this.clear();
-                }
-            });
+            SwingUtilities.invokeLater(DiscoveryThread.this::clear);
         }
 
         public void checkDiscovery(Discovery discovery) {
@@ -498,7 +464,7 @@ public class Network {
         }
 
         private void checkCanJoin() {
-            this.join.setEnabled(this.list.getSelectedValue() != null && this.joinName.getText().length() > 0);
+            this.join.setEnabled(this.list.getSelectedValue() != null && !this.joinName.getText().isEmpty());
         }
 
         public void valueChanged(ListSelectionEvent e) {
@@ -517,11 +483,7 @@ public class Network {
 
         public void intervalAdded(ListDataEvent e) {
             if (this.list.getSelectedValue() == null) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        JoinListener.this.list.setSelectedIndex(0);
-                    }
-                });
+                SwingUtilities.invokeLater(() -> JoinListener.this.list.setSelectedIndex(0));
             }
 
         }

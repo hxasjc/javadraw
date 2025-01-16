@@ -15,7 +15,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,9 +22,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Animation extends ObjectDrawShape implements Serializable {
-    private final ArrayList labels;
-    private final ArrayList specialRegions;
+    private final ArrayList<Label> labels;
+    private final ArrayList<DrawableInterface> specialRegions;
     private final AnimationType type;
     private final Color[] labelColors;
     private Particle[] particles;
@@ -38,7 +38,7 @@ public class Animation extends ObjectDrawShape implements Serializable {
     private final int dy;
     private final DrawingCanvas oldCanvas;
     private boolean attached;
-    private static final List animations = Collections.synchronizedList(new ArrayList());
+    private static final List<Animation> animations = Collections.synchronizedList(new ArrayList<>());
     private static final EventTimer timer = new EventTimer(new AnimationRunner(), "step");
     private static final Font LABEL_FONT;
     private static final Image[] blood;
@@ -91,10 +91,9 @@ public class Animation extends ObjectDrawShape implements Serializable {
 
     public static void cancelAll() {
         synchronized(animations) {
-            Iterator iter = animations.iterator();
 
-            while(iter.hasNext()) {
-                ((Animation)iter.next()).cancel();
+            for (Animation animation : animations) {
+                animation.cancel();
             }
 
         }
@@ -129,8 +128,8 @@ public class Animation extends ObjectDrawShape implements Serializable {
     private boolean isSpecial(double x, double y) {
         Location screenLoc = new Location(x + (double)this.getMyLocation().getX(), y + (double)this.getMyLocation().getY());
 
-        for(int i = 0; i < this.specialRegions.size(); ++i) {
-            DrawableInterface region = (DrawableInterface)this.specialRegions.get(i);
+        for (DrawableInterface specialRegion : this.specialRegions) {
+            DrawableInterface region = specialRegion;
             if (region.contains(screenLoc)) {
                 return true;
             }
@@ -189,7 +188,7 @@ public class Animation extends ObjectDrawShape implements Serializable {
     }
 
     public void setAttached(boolean attached) {
-        if (this.attached = attached) {
+        if (this.attached == attached) {
             this.update();
         }
 
@@ -202,20 +201,20 @@ public class Animation extends ObjectDrawShape implements Serializable {
             Location myLocation = this.getMyLocation();
             Location basisLocation = this.basis.getMyLocation();
             if (!myLocation.equals(basisLocation)) {
-                myLocation.translate((double)(basisLocation.getX() - myLocation.getX() + this.dx), (double)(basisLocation.getY() - myLocation.getY() + this.dy));
+                myLocation.translate(basisLocation.getX() - myLocation.getX() + this.dx, basisLocation.getY() - myLocation.getY() + this.dy);
             }
 
         }
     }
 
     public Animation(AnimationType type, DrawableInterface object) {
-        this((Particle[])null, type, object);
+        this(null, type, object);
     }
 
     private Animation(Particle[] particles, AnimationType type, DrawableInterface object) {
-        super(type.getLocation(object), false, (Color)null, object.getCanvas());
-        this.labels = new ArrayList();
-        this.specialRegions = new ArrayList();
+        super(type.getLocation(object), false, null, object.getCanvas());
+        this.labels = new ArrayList<>();
+        this.specialRegions = new ArrayList<>();
         this.labelColors = new Color[10];
         this.count = 1;
         this.cancelled = false;
@@ -241,8 +240,8 @@ public class Animation extends ObjectDrawShape implements Serializable {
     private boolean checkLabels(int frame) {
         int earliestFrame = frame - 40;
 
-        for(int i = 0; i < this.labels.size(); ++i) {
-            if (((Label)this.labels.get(i)).t >= earliestFrame) {
+        for (Label label : this.labels) {
+            if (label.t >= earliestFrame) {
                 return true;
             }
         }
@@ -251,7 +250,7 @@ public class Animation extends ObjectDrawShape implements Serializable {
     }
 
     private static Location getCenter(DrawableInterface object) {
-        Rectangle2D bounds = ((ObjectDrawShape)object).getShape().getBounds2D();
+        Rectangle2D bounds = object.getShape().getBounds2D();
         return new Location(bounds.getCenterX(), bounds.getCenterY());
     }
 
@@ -265,14 +264,14 @@ public class Animation extends ObjectDrawShape implements Serializable {
             this.firstLabelRender = false;
             FontMetrics fm = g.getFontMetrics();
 
-            for(int i = 0; i < this.labels.size(); ++i) {
-                Label label = (Label)this.labels.get(i);
+            for (Label value : this.labels) {
+                Label label = value;
                 label.offset = -fm.stringWidth(label.text) / 2;
             }
         }
 
-        for(int i = 0; i < this.labels.size(); ++i) {
-            Label label = (Label)this.labels.get(i);
+        for (Label value : this.labels) {
+            Label label = value;
             int dt = frame - label.t;
             if (dt >= 0 && dt < 40) {
                 g.setColor(this.labelColors[dt > 30 ? dt - 30 : 0]);
@@ -283,30 +282,6 @@ public class Animation extends ObjectDrawShape implements Serializable {
             }
         }
 
-    }
-
-    public void hide() {
-        super.hide();
-    }
-
-    public void show() {
-        super.show();
-    }
-
-    public boolean isHidden() {
-        return super.isHidden();
-    }
-
-    public void addToCanvas(DrawingCanvas c) {
-        super.addToCanvas(c);
-    }
-
-    public void removeFromCanvas() {
-        super.removeFromCanvas();
-    }
-
-    public DrawingCanvas getCanvas() {
-        return super.getCanvas();
     }
 
     public void moveTo(Location point) {
@@ -336,10 +311,6 @@ public class Animation extends ObjectDrawShape implements Serializable {
 
     }
 
-    public Color getColor() {
-        return super.getColor();
-    }
-
     public void setColor(Color c) {
         super.setColor(c);
         int RGB = c.getRGB() & 16777215;
@@ -350,22 +321,6 @@ public class Animation extends ObjectDrawShape implements Serializable {
             this.labelColors[i] = new Color(RGB | alpha * (10 - i) / 10 << 24, true);
         }
 
-    }
-
-    public void sendForward() {
-        super.sendForward();
-    }
-
-    public void sendBackward() {
-        super.sendBackward();
-    }
-
-    public void sendToFront() {
-        super.sendToFront();
-    }
-
-    public void sendToBack() {
-        super.sendToBack();
     }
 
     public boolean contains(Location point) {
@@ -413,7 +368,7 @@ public class Animation extends ObjectDrawShape implements Serializable {
     }
 
     static {
-        LABEL_FONT = Text.DEFAULT_FONT.deriveFont(1, 24.0F);
+        LABEL_FONT = Text.DEFAULT_FONT.deriveFont(Font.BOLD, 24.0F);
         defaultLabelColor = DEFAULT_COLOR;
         defaultAttached = true;
         METEORS = new MeteorAnimationType();
@@ -457,10 +412,9 @@ public class Animation extends ObjectDrawShape implements Serializable {
             Particle[] createParticles(Animation animation) {
                 Particle[] particles = this.outline(animation.basis, 1.2, Animation.green[0]);
 
-                for(int i = 0; i < particles.length; ++i) {
-                    Particle p = particles[i];
-                    p.t = (int)(Math.random() * (double)30.0F);
-                    p.vx = p.vy = (double)0.0F;
+                for (Particle p : particles) {
+                    p.t = (int) (Math.random() * (double) 30.0F);
+                    p.vx = p.vy = 0.0F;
                 }
 
                 return particles;
@@ -492,11 +446,10 @@ public class Animation extends ObjectDrawShape implements Serializable {
             }
 
             Particle[] createParticles(Animation animation) {
-                Particle[] particles = this.outline(animation.basis, (double)0.75F, Animation.soot[0]);
+                Particle[] particles = this.outline(animation.basis, 0.75F, Animation.soot[0]);
 
-                for(int i = 0; i < particles.length; ++i) {
-                    Particle p = particles[i];
-                    p.t = (int)(Math.random() * (double)20.0F + Math.random() * (double)20.0F + Math.random() * (double)20.0F);
+                for (Particle p : particles) {
+                    p.t = (int) (Math.random() * (double) 20.0F + Math.random() * (double) 20.0F + Math.random() * (double) 20.0F);
                     p.vx = p.vx * 0.3;
                     p.vy = p.vy * 0.3;
                 }
@@ -519,11 +472,10 @@ public class Animation extends ObjectDrawShape implements Serializable {
             }
 
             Particle[] createParticles(Animation animation) {
-                Particle[] particles = this.outline(animation.basis, (double)0.75F, Animation.spark[0]);
+                Particle[] particles = this.outline(animation.basis, 0.75F, Animation.spark[0]);
 
-                for(int i = 0; i < particles.length; ++i) {
-                    Particle p = particles[i];
-                    p.t = (int)(Math.random() * (double)20.0F + Math.random() * (double)20.0F + Math.random() * (double)20.0F);
+                for (Particle p : particles) {
+                    p.t = (int) (Math.random() * (double) 20.0F + Math.random() * (double) 20.0F + Math.random() * (double) 20.0F);
                     p.vx = p.vx * 0.3;
                     p.vy = p.vy * 0.3;
                 }
@@ -546,11 +498,10 @@ public class Animation extends ObjectDrawShape implements Serializable {
             }
 
             Particle[] createParticles(Animation animation) {
-                Particle[] particles = this.outline(animation.basis, (double)0.75F, Animation.white[0]);
+                Particle[] particles = this.outline(animation.basis, 0.75F, Animation.white[0]);
 
-                for(int i = 0; i < particles.length; ++i) {
-                    Particle p = particles[i];
-                    p.t = (int)(Math.random() * (double)20.0F + Math.random() * (double)20.0F + Math.random() * (double)20.0F);
+                for (Particle p : particles) {
+                    p.t = (int) (Math.random() * (double) 20.0F + Math.random() * (double) 20.0F + Math.random() * (double) 20.0F);
                     p.vx = p.vx * 0.3;
                     p.vy = p.vy * 0.3;
                 }
@@ -605,7 +556,7 @@ public class Animation extends ObjectDrawShape implements Serializable {
                     switch (particle.t & 3) {
                         case 1:
                             if (frame >= 10) {
-                                particle.vy = (double)0.0F;
+                                particle.vy = 0.0F;
                                 particle.vx = particle.vx * 0.85;
                             } else {
                                 particle.vy = particle.vy + (double)1.0F;
@@ -615,8 +566,8 @@ public class Animation extends ObjectDrawShape implements Serializable {
                             return;
                         case 2:
                         case 3:
-                            particle.vx = 0.8 * particle.vx + Math.random() * (double)1.0F - (double)0.5F;
-                            particle.vy = 0.8 * particle.vy + Math.random() * (double)1.0F - (double)0.5F;
+                            particle.vx = 0.8 * particle.vx + Math.random() - (double)0.5F;
+                            particle.vy = 0.8 * particle.vy + Math.random() - (double)0.5F;
                             particle.image = ((particle.t & 3) == 2 ? Animation.steam : Animation.steam2)[frame / 2];
                             return;
                         default:
@@ -788,9 +739,9 @@ public class Animation extends ObjectDrawShape implements Serializable {
                 Particle[] particles = new Particle[120];
 
                 double y;
-                for(int i = 0; i < particles.length; particles[i++] = new Particle((double)1.0F, y - (double)40.0F, 10 * (i / 40) + (int)(((double)70.0F - y) / (double)7.0F), Animation.rightArc[0])) {
+                for(int i = 0; i < particles.length; particles[i++] = new Particle(1.0F, y - (double)40.0F, 10 * (i / 40) + (int)(((double)70.0F - y) / (double)7.0F), Animation.rightArc[0])) {
                     y = (double)4.0F + Math.random() * (double)62.0F;
-                    particles[i++] = new Particle((double)-1.0F, y - (double)40.0F, 10 * (i / 40) + (int)(((double)70.0F - y) / (double)7.0F), Animation.leftArc[0]);
+                    particles[i++] = new Particle(-1.0F, y - (double)40.0F, 10 * (i / 40) + (int)(((double)70.0F - y) / (double)7.0F), Animation.leftArc[0]);
                 }
 
                 return particles;
@@ -831,7 +782,7 @@ public class Animation extends ObjectDrawShape implements Serializable {
                     int t = (int)(Math.random() * (double)5.0F) * 10;
 
                     for(int p = 0; p < 10; ++t) {
-                        particles[i++] = new Particle(x, y, (double)0.0F, (double)-1.0F, t++, Animation.pinkRightArc[0]);
+                        particles[i++] = new Particle(x, y, 0.0F, -1.0F, t++, Animation.pinkRightArc[0]);
                         ++p;
                     }
                 }
@@ -854,7 +805,7 @@ public class Animation extends ObjectDrawShape implements Serializable {
                     }
 
                     if (particle.x > (double)20.0F) {
-                        particle.x = (double)-20.0F;
+                        particle.x = -20.0F;
                     }
 
                     particle.vx = (double)2.0F * Math.cos(particle.x * Math.PI / (double)50.0F);
@@ -903,8 +854,8 @@ public class Animation extends ObjectDrawShape implements Serializable {
         };
         LIGHTNING = new SimpleAnimationType(30) {
             Particle[] createParticles(Animation animation) {
-                ArrayList particles = new ArrayList();
-                particles.add(new Particle((double)0.0F, (double)-30.0F, 9, Animation.purple[0]));
+                ArrayList<Particle> particles = new ArrayList<>();
+                particles.add(new Particle(0.0F, -30.0F, 9, Animation.purple[0]));
                 int lineStart = 0;
 
                 for(int y = -3; y > -207; y -= 3) {
@@ -913,35 +864,35 @@ public class Animation extends ObjectDrawShape implements Serializable {
                     double branchProb = 0.2 / (double)(lineStart - lastLineStart);
 
                     for(int j = lastLineStart; j < lineStart; ++j) {
-                        Particle p = (Particle)particles.get(j);
+                        Particle p = particles.get(j);
                         int t = p.t - (int)(Math.random() * 1.4);
                         if (t >= 0) {
                             if (Math.random() < branchProb) {
                                 double vx = Math.random() + (double)1.0F;
-                                particles.add(new Particle(p.x + vx, (double)y, vx, (double)0.0F, t, Animation.purple[0]));
+                                particles.add(new Particle(p.x + vx, y, vx, 0.0F, t, Animation.purple[0]));
                                 vx = -Math.random() - (double)1.0F;
-                                particles.add(new Particle(p.x + vx, (double)y, vx, (double)0.0F, t, Animation.purple[0]));
+                                particles.add(new Particle(p.x + vx, y, vx, 0.0F, t, Animation.purple[0]));
                             } else {
                                 double vx = p.vx + Math.random() - (double)0.5F;
-                                particles.add(new Particle(p.x + vx, (double)y, vx, (double)0.0F, t, Animation.purple[0]));
+                                particles.add(new Particle(p.x + vx, y, vx, 0.0F, t, Animation.purple[0]));
                             }
                         }
 
-                        p.vx = (double)0.0F;
+                        p.vx = 0.0F;
                     }
                 }
 
                 for(int j = lineStart; j < particles.size(); ++j) {
-                    ((Particle)particles.get(j)).vx = (double)0.0F;
+                    ((Particle)particles.get(j)).vx = 0.0F;
                 }
 
                 for(int i = 0; i < 30; ++i) {
                     double angle = Math.random() * Math.PI * (double)2.0F;
                     double speed = (double)5.0F + Math.random() * (double)2.0F;
-                    particles.add(new Particle((double)0.0F, (double)0.0F, speed * Math.sin(angle), speed * Math.cos(angle), 10, Animation.white[0]));
+                    particles.add(new Particle(0.0F, 0.0F, speed * Math.sin(angle), speed * Math.cos(angle), 10, Animation.white[0]));
                 }
 
-                return (Particle[])particles.toArray(new Particle[particles.size()]);
+                return (Particle[])particles.toArray(new Particle[0]);
             }
 
             void update(Particle particle, int frame) {
@@ -1071,11 +1022,11 @@ public class Animation extends ObjectDrawShape implements Serializable {
         }
 
         Particle[] outline(ObjectDrawShape basis, double separation, Image image) {
-            ArrayList particles = new ArrayList();
+            ArrayList<Particle> particles = new ArrayList<>();
             if (basis instanceof VisibleImage) {
                 BufferedImage target = this.getImage((VisibleImage)basis);
-                int w = target.getWidth((ImageObserver)null);
-                int h = target.getHeight((ImageObserver)null);
+                int w = target.getWidth(null);
+                int h = target.getHeight(null);
                 int[] pixels = new int[w * h];
                 int[] accum = new int[w * h];
                 target.getRGB(0, 0, w, h, pixels, 0, w);
@@ -1093,7 +1044,7 @@ public class Animation extends ObjectDrawShape implements Serializable {
                             double gx = 0.7 * (double)(-accum[i - w - 1] - accum[i + w - 1] + accum[i - w + 1] + accum[i + w + 1]) - (double)accum[i - 1] + (double)accum[i + 1];
                             double gy = 0.7 * (double)(-accum[i - w - 1] + accum[i + w - 1] - accum[i - w + 1] + accum[i + w + 1]) - (double)accum[i - w] + (double)accum[i + w];
                             double g = (double)-1.0F / Math.sqrt(gx * gx + gy * gy);
-                            particles.add(new Particle((double)x, (double)y, g * gx, g * gy, 0, image));
+                            particles.add(new Particle(x, y, g * gx, g * gy, 0, image));
                         }
                     }
                 }
@@ -1101,24 +1052,24 @@ public class Animation extends ObjectDrawShape implements Serializable {
                 for(int y = 0; y < h; ++y) {
                     int a = accum[y * w];
                     if (a >= 20 && a <= 1000 && Math.random() < prob) {
-                        particles.add(new Particle((double)0.0F, (double)y, (double)-1.0F, (double)0.0F, 0, image));
+                        particles.add(new Particle(0.0F, y, -1.0F, 0.0F, 0, image));
                     }
 
                     int b = accum[y * w + w - 1];
                     if (b >= 20 && b <= 1000 && Math.random() < prob) {
-                        particles.add(new Particle((double)(w - 1), (double)y, (double)1.0F, (double)0.0F, 0, image));
+                        particles.add(new Particle(w - 1, y, 1.0F, 0.0F, 0, image));
                     }
                 }
 
                 for(int x = 0; x < w; ++x) {
                     int a = accum[x];
                     if (a >= 20 && a <= 1000 && Math.random() < prob) {
-                        particles.add(new Particle((double)x, (double)0.0F, (double)0.0F, (double)-1.0F, 0, image));
+                        particles.add(new Particle(x, 0.0F, 0.0F, -1.0F, 0, image));
                     }
 
                     int b = accum[(h - 1) * w + x];
                     if (b >= 20 && b <= 1000 && Math.random() < prob) {
-                        particles.add(new Particle((double)x, (double)(h - 1), (double)0.0F, (double)1.0F, 0, image));
+                        particles.add(new Particle(x, h - 1, 0.0F, 1.0F, 0, image));
                     }
                 }
             } else {
@@ -1133,12 +1084,12 @@ public class Animation extends ObjectDrawShape implements Serializable {
                 }
             }
 
-            return (Particle[])particles.toArray(new Particle[particles.size()]);
+            return particles.toArray(new Particle[0]);
         }
 
         void draw(Graphics2D g, Particle particle) {
             if (particle != null && particle.image != null) {
-                g.drawImage(particle.image, (int)(particle.x - particle.dx + (double)0.5F), (int)(particle.y - particle.dy + (double)0.5F), (ImageObserver)null);
+                g.drawImage(particle.image, (int)(particle.x - particle.dx + (double)0.5F), (int)(particle.y - particle.dy + (double)0.5F), null);
             }
 
         }
@@ -1162,10 +1113,10 @@ public class Animation extends ObjectDrawShape implements Serializable {
             if (animation.specialRegions.isEmpty()) {
                 throw new IllegalStateException("You must use addSpecialRegion() to specify a meteor's target.");
             } else {
-                Location target = Animation.getCenter((DrawableInterface)animation.specialRegions.get(0));
-                double tx = (double)(target.getX() - animation.getMyLocation().getX());
-                double ty = (double)(target.getY() - animation.getMyLocation().getY());
-                Particle accelerateParticle = particles[0] = new Particle(tx, ty, 1, (Image)null);
+                Location target = Animation.getCenter(animation.specialRegions.get(0));
+                double tx = target.getX() - animation.getMyLocation().getX();
+                double ty = target.getY() - animation.getMyLocation().getY();
+                Particle accelerateParticle = particles[0] = new Particle(tx, ty, 1, null);
                 if (animation.particles != null) {
                     System.arraycopy(animation.particles, 0, particles, 1, 11);
                 } else {
@@ -1222,10 +1173,9 @@ public class Animation extends ObjectDrawShape implements Serializable {
 
                 Image image = Animation.explosion[frame <= 30 ? 0 : frame - 30];
 
-                for(int i = 0; i < particles.length; ++i) {
-                    Particle p = particles[i];
-                    p.x = p.x + (p.vx = p.vx * 0.9 + (double)0.5F * Math.random() - (double)0.25F);
-                    p.y = p.y + (p.vy = p.vy * 0.9 + (double)0.5F * Math.random() - (double)0.25F);
+                for (Particle p : particles) {
+                    p.x = p.x + (p.vx = p.vx * 0.9 + (double) 0.5F * Math.random() - (double) 0.25F);
+                    p.y = p.y + (p.vy = p.vy * 0.9 + (double) 0.5F * Math.random() - (double) 0.25F);
                     p.image = image;
                 }
             }
@@ -1265,7 +1215,7 @@ public class Animation extends ObjectDrawShape implements Serializable {
                 particles[i++] = new Particle(r * Math.sin(angle), r * Math.cos(angle), speed * Math.sin(direction), speed * Math.cos(direction), (int)(Math.random() * (double)4.0F), Animation.asteroid[0]);
 
                 for(int c = 0; c < 10; ++c) {
-                    particles[i++] = new Particle((double)0.0F, (double)0.0F, c, Animation.explosion[0]);
+                    particles[i++] = new Particle(0.0F, 0.0F, c, Animation.explosion[0]);
                 }
             }
 
@@ -1364,14 +1314,14 @@ public class Animation extends ObjectDrawShape implements Serializable {
 
         Location getLocation(DrawableInterface object) {
             Location loc = Animation.getCenter(object);
-            loc.translate((double)0.0F, (double)this.yOffset);
+            loc.translate(0.0F, this.yOffset);
             return loc;
         }
 
         public void draw(Particle[] particles, Graphics2D g, Animation animation) {
             if (animation.frame < this.length) {
-                for(int i = 0; i < particles.length; ++i) {
-                    this.draw(g, particles[i]);
+                for (Particle particle : particles) {
+                    this.draw(g, particle);
                 }
 
             }
@@ -1382,8 +1332,7 @@ public class Animation extends ObjectDrawShape implements Serializable {
         abstract void update(Particle var1, int var2);
 
         boolean step(Particle[] particles, int frame, Animation animation) {
-            for(int i = 0; i < particles.length; ++i) {
-                Particle particle = particles[i];
+            for (Particle particle : particles) {
                 this.update(particle, frame);
                 if (particle.image != null) {
                     particle.x = particle.x + particle.vx;
@@ -1436,10 +1385,10 @@ public class Animation extends ObjectDrawShape implements Serializable {
 
         public void setImage(Image image) {
             if (image == null) {
-                this.dx = this.dy = (double)0.0F;
+                this.dx = this.dy = 0.0F;
             } else {
-                this.dx = (double)0.5F * (double)image.getWidth((ImageObserver)null);
-                this.dy = (double)0.5F * (double)image.getHeight((ImageObserver)null);
+                this.dx = (double)0.5F * (double)image.getWidth(null);
+                this.dy = (double)0.5F * (double)image.getHeight(null);
             }
 
             this.image = image;
@@ -1451,9 +1400,9 @@ public class Animation extends ObjectDrawShape implements Serializable {
         }
 
         public void step() {
-            HashSet<DrawingCanvas> canvases = new HashSet();
+            HashSet<DrawingCanvas> canvases = new HashSet<>();
             synchronized(Animation.animations) {
-                Iterator iter = Animation.animations.iterator();
+                Iterator<Animation> iter = Animation.animations.iterator();
 
                 while(iter.hasNext()) {
                     Animation animation = (Animation)iter.next();

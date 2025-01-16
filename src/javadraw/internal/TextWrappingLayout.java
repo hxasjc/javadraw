@@ -61,8 +61,8 @@ public class TextWrappingLayout {
             text = text + run.getText();
         }
 
-        if (text.length() == 0) {
-            this.writeLayout((HashMap)null);
+        if (text.isEmpty()) {
+            this.writeLayout(null);
             return true;
         } else {
             AttributedString string = new AttributedString(text);
@@ -97,7 +97,7 @@ public class TextWrappingLayout {
             }
 
             double var10000 = height - (double)layout.getLeading();
-            this.writeLayout((HashMap)null);
+            this.writeLayout(null);
             return true;
         }
     }
@@ -110,8 +110,8 @@ public class TextWrappingLayout {
             text = text + run.getText();
         }
 
-        if (text.length() == 0) {
-            this.writeLayout((HashMap)null);
+        if (text.isEmpty()) {
+            this.writeLayout(null);
             return true;
         } else {
             AttributedString string = new AttributedString(text);
@@ -126,7 +126,7 @@ public class TextWrappingLayout {
             }
 
             GeneralPath path = new GeneralPath();
-            ArrayList paths = new ArrayList();
+            ArrayList<GeneralPath> paths = new ArrayList<>();
             run = this.start;
 
             int runEndOffset;
@@ -198,7 +198,7 @@ public class TextWrappingLayout {
     }
 
     private boolean layoutInRect(Rectangle2D rect) {
-        HashMap map = this.tryLayout(rect.getMinY() + this.endPadding);
+        HashMap<String, Double> map = this.tryLayout(rect.getMinY() + this.endPadding);
         double top = this.getMapTop(map);
         double bottom = this.getMapBottom(map);
         double height = bottom - top;
@@ -211,28 +211,28 @@ public class TextWrappingLayout {
     public boolean doLayout() {
         WordInfo info = this.getFirstWord(this.start, 0);
         if (!info.exists) {
-            this.writeLayout((HashMap)null);
+            this.writeLayout(null);
             return true;
         } else if (this.shape == null) {
             return this.doLayoutNoShape();
-        } else if (this.shape instanceof Arc2D && ((Arc2D)this.shape).getArcType() == 0) {
+        } else if (this.shape instanceof Arc2D && ((Arc2D)this.shape).getArcType() == Arc2D.OPEN) {
             return this.doLayoutOnArc();
         } else if (this.shape instanceof Rectangle2D) {
             return this.layoutInRect((Rectangle2D)this.shape);
         } else {
             Rectangle2D firstLine = this.placeWord(info.width, info.height, (double)-1.0F);
             if (firstLine == null) {
-                this.writeLayout((HashMap)null);
+                this.writeLayout(null);
                 return false;
             } else {
                 double minY = firstLine.getMinY();
-                HashMap map = this.tryLayout(minY);
+                HashMap<String, Double> map = this.tryLayout(minY);
                 if (this.alignV != (double)-1.0F && this.isFullLayout(map)) {
                     double top = this.shape.getBounds2D().getMinY();
                     double bottom = this.shape.getBounds2D().getMaxY();
                     double maxY = this.placeWord(info.width, info.height, (double)1.0F).getMinY();
                     double align = ((double)1.0F + this.alignV) / (double)2.0F;
-                    HashMap bestMap = map;
+                    HashMap<String, Double> bestMap = map;
                     double bestAlign = (this.getMapTop(map) - top) / (this.getMapTop(map) - top + bottom - this.getMapBottom(map));
                     if (bestAlign > align) {
                         this.writeLayout(map);
@@ -346,7 +346,7 @@ public class TextWrappingLayout {
         rect.setRect(endX, y, x - endX, h);
     }
 
-    private ArrayList getLine(Rectangle2D line) {
+    private ArrayList<Rectangle2D> getLine(Rectangle2D line) {
         Rectangle2D rect = new Rectangle2D.Double();
         double minWidth = line.getHeight() * 0.2 + (double)2.0F * this.endPadding;
 
@@ -355,7 +355,7 @@ public class TextWrappingLayout {
                 rect.setRect(x + line.getMinX(), line.getMinY(), minWidth, line.getHeight());
                 if (this.shape.contains(rect)) {
                     this.expand(rect, line.getMinX(), line.getMaxX());
-                    ArrayList list = this.getLine(new Rectangle2D.Double(line.getMinX(), line.getMinY(), rect.getMinX() - line.getMinX(), line.getHeight()));
+                    ArrayList<Rectangle2D> list = this.getLine(new Rectangle2D.Double(line.getMinX(), line.getMinY(), rect.getMinX() - line.getMinX(), line.getHeight()));
                     list.add(rect);
                     list.addAll(this.getLine(new Rectangle2D.Double(rect.getMaxX(), line.getMinY(), line.getMaxX() - rect.getMaxX(), line.getHeight())));
                     return list;
@@ -363,14 +363,14 @@ public class TextWrappingLayout {
             }
         }
 
-        return new ArrayList();
+        return new ArrayList<>();
     }
 
     private boolean lineHasSpace(Rectangle2D line, double width) {
-        ArrayList rects = this.getLine(line);
+        ArrayList<Rectangle2D> rects = this.getLine(line);
 
         for(int i = 0; i < rects.size(); ++i) {
-            Rectangle2D rect = (Rectangle2D)rects.get(i);
+            Rectangle2D rect = rects.get(i);
             if (rect.getWidth() >= width) {
                 return true;
             }
@@ -428,10 +428,10 @@ public class TextWrappingLayout {
         return oldLine;
     }
 
-    private HashMap tryLayout(double minY) {
+    private HashMap<String, Double> tryLayout(double minY) {
         double maxY = this.shape.getBounds2D().getMaxY() - this.endPadding;
-        HashMap map = new HashMap();
-        map.put("Top", new Double(minY));
+        HashMap<String, Double> map = new HashMap<>();
+        map.put("Top", minY);
         int offset = 0;
         int totalChars = 0;
         TextRun run = this.start;
@@ -446,7 +446,7 @@ public class TextWrappingLayout {
 
             line.writeToMap(map);
             if (line.getStatus() == 2) {
-                map.put("Bottom", new Double(bottom));
+                map.put("Bottom", bottom);
                 return map;
             }
 
@@ -455,30 +455,30 @@ public class TextWrappingLayout {
             run = line.getLastRun();
         }
 
-        map.put("Bottom", new Double(bottom));
-        map.put("Count", new Integer(totalChars));
+        map.put("Bottom", bottom);
+        map.put("Count", (double) totalChars);
         return map;
     }
 
-    private double getMapBottom(HashMap map) {
-        Double b = (Double)map.get("Bottom");
+    private double getMapBottom(HashMap<String, Double> map) {
+        Double b = map.get("Bottom");
         return b == null ? Double.NaN : b;
     }
 
-    private double getMapTop(HashMap map) {
+    private double getMapTop(HashMap<String, Double> map) {
         return (Double)map.get("Top");
     }
 
-    private int getMapLength(HashMap map) {
-        return (Integer)map.get("Count");
+    private int getMapLength(HashMap<String, Double> map) {
+        return map.get("Count").intValue();
     }
 
-    private boolean isFullLayout(HashMap map) {
+    private boolean isFullLayout(HashMap<String, Double> map) {
         return map.get("Count") == null;
     }
 
-    private void writeLayout(HashMap map) {
-        this.writeLayout(map, (AffineTransform)null);
+    private void writeLayout(HashMap<String, Double> map) {
+        this.writeLayout(map, null);
     }
 
     private void writeLayout(HashMap map, AffineTransform transform) {
@@ -553,7 +553,7 @@ public class TextWrappingLayout {
         }
     }
 
-    private class WordInfo {
+    private static class WordInfo {
         public int newlines;
         public int offset;
         public int totalOffset;
@@ -574,14 +574,14 @@ public class TextWrappingLayout {
         private TextRun lastRun;
         private int totalOffset;
         private int endOffset;
-        private ArrayList shapes;
+        private ArrayList<GeneralPath> shapes;
         private int status;
         private double growHeight;
         private double bottom;
 
         public LineLayout(TextRun firstRun, int startOffset, double height, double top) {
             this.firstRun = firstRun;
-            this.shapes = new ArrayList();
+            this.shapes = new ArrayList<>();
             this.bottom = top + height;
             this.doLayout(startOffset, height, top);
         }
@@ -622,8 +622,8 @@ public class TextWrappingLayout {
                 run = this.firstRun;
                 this.lastRun = this.firstRun;
                 this.status = 0;
-                double leading = (double)0.0F;
-                ArrayList rects = TextWrappingLayout.this.getLine(new Rectangle2D.Double(TextWrappingLayout.this.shape.getBounds2D().getMinX(), top, TextWrappingLayout.this.shape.getBounds2D().getWidth(), height));
+                double leading = 0.0F;
+                ArrayList<Rectangle2D> rects = TextWrappingLayout.this.getLine(new Rectangle2D.Double(TextWrappingLayout.this.shape.getBounds2D().getMinX(), top, TextWrappingLayout.this.shape.getBounds2D().getWidth(), height));
 
                 for(int i = 0; i < rects.size() && this.status == 0; ++i) {
                     Rectangle2D rect = (Rectangle2D)rects.get(i);

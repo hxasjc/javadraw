@@ -47,8 +47,8 @@ public abstract class ObjectDrawPolygon extends ObjectDrawShape implements Drawa
         this.getMyLocation().depend(this);
         this.regular = false;
         this.points = points;
-        this.width = (double)200.0F;
-        this.height = (double)200.0F;
+        this.width = 200.0F;
+        this.height = 200.0F;
     }
 
     public int getX() {

@@ -30,10 +30,10 @@ abstract class NetworkThread implements Runnable {
     private static final boolean DEBUG = false;
     private final CharsetEncoder encoder;
     private final CharsetDecoder decoder;
-    private final List channelChanges;
-    private final List messagesToWrite;
-    private final ArrayList channels;
-    private final LinkedList POOL;
+    private final List<ChannelUpdate> channelChanges;
+    private final List<PendingMessage> messagesToWrite;
+    private final ArrayList<Channel> channels;
+    private final LinkedList<Message> POOL;
     private final CharBuffer readCharBuffer;
     final Selector selector;
     private final String name;
@@ -68,10 +68,10 @@ abstract class NetworkThread implements Runnable {
     NetworkThread(String name) throws IOException {
         this.encoder = CHARSET.newEncoder();
         this.decoder = CHARSET.newDecoder();
-        this.channelChanges = Collections.synchronizedList(new LinkedList());
-        this.messagesToWrite = Collections.synchronizedList(new LinkedList());
-        this.channels = new ArrayList();
-        this.POOL = new LinkedList();
+        this.channelChanges = Collections.synchronizedList(new LinkedList<>());
+        this.messagesToWrite = Collections.synchronizedList(new LinkedList<>());
+        this.channels = new ArrayList<>();
+        this.POOL = new LinkedList<>();
         this.readCharBuffer = CharBuffer.allocate(65536);
         this.running = false;
         this.nextID = 0;
@@ -94,13 +94,13 @@ abstract class NetworkThread implements Runnable {
         return message;
     }
 
-    private String decode(ArrayList messages) {
+    private String decode(ArrayList<Message> messages) {
         this.readCharBuffer.clear();
         this.decoder.reset();
-        ((Message)messages.get(0)).buffer.position(2);
+        messages.get(0).buffer.position(2);
 
         for(int i = 0; i < messages.size(); ++i) {
-            ByteBuffer buffer = ((Message)messages.get(i)).buffer;
+            ByteBuffer buffer = messages.get(i).buffer;
             if (i == messages.size() - 1) {
                 this.decoder.decode(buffer, this.readCharBuffer, true);
             } else {
@@ -113,9 +113,9 @@ abstract class NetworkThread implements Runnable {
         return this.readCharBuffer.toString();
     }
 
-    private ArrayList encode(String string, int retainCount) {
+    private ArrayList<Message> encode(String string, int retainCount) {
         CharBuffer input = CharBuffer.wrap(string);
-        ArrayList messages = new ArrayList();
+        ArrayList<Message> messages = new ArrayList<>();
         Message firstMessage = this.createMessage();
         firstMessage.buffer.position(2);
         messages.add(firstMessage);
@@ -201,7 +201,7 @@ abstract class NetworkThread implements Runnable {
             PendingMessage message = (PendingMessage)this.messagesToWrite.remove(0);
             if (message.channel < 0) {
                 if (!this.channels.isEmpty()) {
-                    ArrayList messages = this.encode(message.message, this.channels.size());
+                    ArrayList<Message> messages = this.encode(message.message, this.channels.size());
 
                     for(int i = 0; i < this.channels.size(); ++i) {
                         Channel channel = (Channel)this.channels.get(i);
@@ -226,10 +226,10 @@ abstract class NetworkThread implements Runnable {
             Channel channel = new Channel(socketChannel);
             SelectionKey key = socketChannel.keyFor(this.selector);
             if (key == null) {
-                socketChannel.register(this.selector, 5, channel);
+                socketChannel.register(this.selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, channel);
             } else {
                 key.attach(channel);
-                key.interestOps(5);
+                key.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -253,7 +253,7 @@ abstract class NetworkThread implements Runnable {
             return;
         }
 
-        Iterator iter = this.selector.selectedKeys().iterator();
+        Iterator<SelectionKey> iter = this.selector.selectedKeys().iterator();
 
         while(iter.hasNext()) {
             SelectionKey key = (SelectionKey)iter.next();
@@ -332,8 +332,8 @@ abstract class NetworkThread implements Runnable {
     private class Channel implements ChannelHandler {
         private String name = null;
         private final int id;
-        private final ArrayList readBuffers = new ArrayList();
-        private final LinkedList writeQueue = new LinkedList();
+        private final ArrayList<Message> readBuffers = new ArrayList<>();
+        private final LinkedList<Message> writeQueue = new LinkedList<>();
         private final SocketChannel channel;
         private int remainingReadLength;
         private int writePosition;
@@ -353,7 +353,7 @@ abstract class NetworkThread implements Runnable {
             key.interestOps(interested ? key.interestOps() | 4 : key.interestOps() & -5);
         }
 
-        public boolean enqueue(ArrayList messages) {
+        public boolean enqueue(ArrayList<Message> messages) {
             if (!this.channel.isOpen()) {
                 this.close();
                 return false;
@@ -368,7 +368,7 @@ abstract class NetworkThread implements Runnable {
         }
 
         public boolean readOnePage() throws IOException {
-            ByteBuffer buffer = ((Message)this.readBuffers.get(this.readBuffers.size() - 1)).buffer;
+            ByteBuffer buffer = this.readBuffers.get(this.readBuffers.size() - 1).buffer;
             int readBytes = this.channel.read(buffer);
             if (readBytes == -1) {
                 this.close();
@@ -460,7 +460,7 @@ abstract class NetworkThread implements Runnable {
 
             try {
                 this.channel.close();
-            } catch (IOException var2) {
+            } catch (IOException ignored) {
             }
 
         }
@@ -499,7 +499,7 @@ abstract class NetworkThread implements Runnable {
         }
     }
 
-    private class Message {
+    private static class Message {
         final ByteBuffer buffer;
         int retainCount;
 
@@ -519,7 +519,7 @@ abstract class NetworkThread implements Runnable {
         }
     }
 
-    private class ChannelUpdate {
+    private static class ChannelUpdate {
         private final SelectionKey key;
         private final int interestOps;
         private final int changeMask;

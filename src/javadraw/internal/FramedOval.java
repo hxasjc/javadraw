@@ -35,7 +35,7 @@ public class FramedOval extends ObjectDrawRectangularShape implements DrawableSt
     }
 
     public FramedOval(double x, double y, double width, double height, DrawingCanvas canvas) {
-        this(x, y, width, height, (Color)null, canvas);
+        this(x, y, width, height, null, canvas);
     }
 
     public FramedOval(Location point, double width, double height, Color color, DrawingCanvas canvas) {
@@ -43,7 +43,7 @@ public class FramedOval extends ObjectDrawRectangularShape implements DrawableSt
     }
 
     public FramedOval(Location point, double width, double height, DrawingCanvas canvas) {
-        this(point, width, height, (Color)null, canvas);
+        this(point, width, height, null, canvas);
     }
 
     public FramedOval(Location corner1, Location corner2, Color color, DrawingCanvas canvas) {
@@ -51,7 +51,7 @@ public class FramedOval extends ObjectDrawRectangularShape implements DrawableSt
     }
 
     public FramedOval(Location corner1, Location corner2, DrawingCanvas canvas) {
-        this(corner1, corner2, (Color)null, canvas);
+        this(corner1, corner2, null, canvas);
     }
 
     /** @deprecated */
@@ -60,7 +60,7 @@ public class FramedOval extends ObjectDrawRectangularShape implements DrawableSt
     }
 
     public double getLineWidth() {
-        return (double)this.stroke.getLineWidth();
+        return this.stroke.getLineWidth();
     }
 
     public BasicStroke getStroke() {

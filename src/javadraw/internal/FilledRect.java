@@ -17,7 +17,7 @@ public class FilledRect extends ObjectDrawRectangularShape implements Serializab
     }
 
     public FilledRect(double x, double y, double width, double height, DrawingCanvas canvas) {
-        this(x, y, width, height, (Color)null, canvas);
+        this(x, y, width, height, null, canvas);
     }
 
     public FilledRect(Location point, double width, double height, Color color, DrawingCanvas canvas) {
@@ -25,7 +25,7 @@ public class FilledRect extends ObjectDrawRectangularShape implements Serializab
     }
 
     public FilledRect(Location point, double width, double height, DrawingCanvas canvas) {
-        this(point, width, height, (Color)null, canvas);
+        this(point, width, height, null, canvas);
     }
 
     public FilledRect(Location corner1, Location corner2, Color color, DrawingCanvas canvas) {
@@ -33,7 +33,7 @@ public class FilledRect extends ObjectDrawRectangularShape implements Serializab
     }
 
     public FilledRect(Location corner1, Location corner2, DrawingCanvas canvas) {
-        this(corner1, corner2, (Color)null, canvas);
+        this(corner1, corner2, null, canvas);
     }
 
     public FilledRect(double x, double y, double width, double height, double angle, Color color, DrawingCanvas canvas) {
@@ -47,7 +47,7 @@ public class FilledRect extends ObjectDrawRectangularShape implements Serializab
     }
 
     public FilledRect(double x, double y, double width, double height, double angle, DrawingCanvas canvas) {
-        this(x, y, width, height, angle, (Color)null, canvas);
+        this(x, y, width, height, angle, null, canvas);
     }
 
     /** @deprecated */

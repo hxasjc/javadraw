@@ -11,7 +11,7 @@ import java.util.WeakHashMap;
 public class CoffeeTester extends WindowController implements ClientListener {
     private static final long serialVersionUID = 7579274715942148859L;
     private Client client;
-    private WeakHashMap<Integer, DrawableInterface> clients = new WeakHashMap();
+    private final WeakHashMap<Integer, DrawableInterface> clients = new WeakHashMap<>();
 
     public CoffeeTester() {
     }
@@ -23,11 +23,11 @@ public class CoffeeTester extends WindowController implements ClientListener {
     public void begin() {
         Network.configure("CoffeeTester", new ServerListener() {
             public void serverStarted(Server server) {
-                new FilledRect((double)0.0F, (double)0.0F, (double)10.0F, (double)10.0F, Color.GREEN, CoffeeTester.this.canvas);
+                new FilledRect(0.0F, 0.0F, 10.0F, 10.0F, Color.GREEN, CoffeeTester.this.canvas);
             }
 
             public void channelOpened(Server server, int channelID, String channelName) {
-                server.sendMessage(Packet.serialize(new LocationPacket(new Location((double)150.0F, (double)150.0F))));
+                server.sendMessage(Packet.serialize(new LocationPacket(new Location(150.0F, 150.0F))));
             }
 
             public void messageReceived(Server server, int channelID, String channelName, String message) {
@@ -50,7 +50,7 @@ public class CoffeeTester extends WindowController implements ClientListener {
         Packet packet = Packet.deserialize(message);
         if (packet instanceof LocationPacket) {
             LocationPacket locPacket = (LocationPacket)packet;
-            ((DrawableInterface)this.clients.get(locPacket.getID())).moveTo(locPacket.getLocation());
+            this.clients.get(locPacket.getID()).moveTo(locPacket.getLocation());
         }
 
     }

@@ -36,10 +36,10 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
     public static String formatDecimal(double num, int places) {
         String sign = num < (double)0.0F ? "-" : "";
         String tail = "";
-        double min = (double)1.0F;
+        double min = 1.0F;
 
         for(int i = 0; i < places; ++i) {
-            min /= (double)10.0F;
+            min /= 10.0F;
         }
 
         if (num < (double)0.0F) {
@@ -49,7 +49,7 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
         if (num >= (double)1.0E9F) {
             int exponent;
             for(exponent = 0; num >= (double)10.0F; ++exponent) {
-                num /= (double)10.0F;
+                num /= 10.0F;
             }
 
             tail = "e" + exponent + tail;
@@ -61,7 +61,7 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
             if (num <= min) {
                 int exponent;
                 for(exponent = 0; num < (double)1.0F; ++exponent) {
-                    num *= (double)10.0F;
+                    num *= 10.0F;
                 }
 
                 tail = "e-" + exponent + tail;
@@ -69,19 +69,19 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
         }
 
         int ipart = (int)num;
-        num -= (double)ipart;
+        num -= ipart;
         int place = 1;
-        double adjust = (double)0.5F;
+        double adjust = 0.5F;
 
         for(int i = 0; i < places; ++i) {
             place *= 10;
-            adjust /= (double)10.0F;
+            adjust /= 10.0F;
         }
 
         int d;
         for(d = (int)((num + adjust) * (double)place) % 10; d == 0 && place > 1; d = (int)((num + adjust) * (double)place) % 10) {
             place /= 10;
-            adjust *= (double)10.0F;
+            adjust *= 10.0F;
         }
 
         if (place <= 1) {
@@ -99,8 +99,8 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
 
     private Text(Object text, double x, double y, DrawableInterface basis, Color color, DrawingCanvas canvas) {
         super(new Location(x, y), true, color, canvas);
-        this.alignH = (double)-1.0F;
-        this.alignV = (double)1.0F;
+        this.alignH = -1.0F;
+        this.alignV = 1.0F;
         this.font = DEFAULT_FONT;
         this.basis = basis;
         this.text = text + "";
@@ -122,7 +122,7 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
     }
 
     public Text(Object text, double x, double y, Color color, DrawingCanvas canvas) {
-        this(text, x, y, (DrawableInterface)null, color, canvas);
+        this(text, x, y, null, color, canvas);
     }
 
     private static ObjectDrawShape checkBasis(DrawableInterface basis) {
@@ -136,7 +136,7 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
     }
 
     public Text(Object text, DrawableInterface basis, Color color, DrawingCanvas canvas) {
-        this(text, (double)checkBasis(basis).getMyLocation().getX(), (double)checkBasis(basis).getMyLocation().getY(), basis, color, canvas);
+        this(text, checkBasis(basis).getMyLocation().getX(), checkBasis(basis).getMyLocation().getY(), basis, color, canvas);
     }
 
     public Text(Object text, Location origin, Color color, DrawingCanvas canvas) {
@@ -148,11 +148,11 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
     }
 
     public Text(boolean text, DrawableInterface basis, Color color, DrawingCanvas canvas) {
-        this("" + text, (DrawableInterface)basis, color, canvas);
+        this("" + text, basis, color, canvas);
     }
 
     public Text(boolean text, Location origin, Color color, DrawingCanvas canvas) {
-        this("" + text, (Location)origin, color, canvas);
+        this("" + text, origin, color, canvas);
     }
 
     public Text(char text, double x, double y, Color color, DrawingCanvas canvas) {
@@ -160,11 +160,11 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
     }
 
     public Text(char text, DrawableInterface basis, Color color, DrawingCanvas canvas) {
-        this("" + text, (DrawableInterface)basis, color, canvas);
+        this("" + text, basis, color, canvas);
     }
 
     public Text(char text, Location origin, Color color, DrawingCanvas canvas) {
-        this("" + text, (Location)origin, color, canvas);
+        this("" + text, origin, color, canvas);
     }
 
     public Text(double text, double x, double y, Color color, DrawingCanvas canvas) {
@@ -172,11 +172,11 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
     }
 
     public Text(double text, DrawableInterface basis, Color color, DrawingCanvas canvas) {
-        this(formatDecimal(text), (DrawableInterface)basis, color, canvas);
+        this(formatDecimal(text), basis, color, canvas);
     }
 
     public Text(double text, Location origin, Color color, DrawingCanvas canvas) {
-        this(formatDecimal(text), (Location)origin, color, canvas);
+        this(formatDecimal(text), origin, color, canvas);
     }
 
     public Text(long text, double x, double y, Color color, DrawingCanvas canvas) {
@@ -184,19 +184,19 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
     }
 
     public Text(long text, DrawableInterface basis, Color color, DrawingCanvas canvas) {
-        this("" + text, (DrawableInterface)basis, color, canvas);
+        this("" + text, basis, color, canvas);
     }
 
     public Text(long text, Location origin, Color color, DrawingCanvas canvas) {
-        this("" + text, (Location)origin, color, canvas);
+        this("" + text, origin, color, canvas);
     }
 
     public Text(Object text, double x, double y, DrawingCanvas canvas) {
-        this(text, x, y, (Color)null, canvas);
+        this(text, x, y, null, canvas);
     }
 
     public Text(Object text, DrawableInterface basis, DrawingCanvas canvas) {
-        this(text, (DrawableInterface)basis, (Color)null, canvas);
+        this(text, basis, null, canvas);
     }
 
     public Text(Object text, Location origin, DrawingCanvas canvas) {
@@ -204,51 +204,51 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
     }
 
     public Text(boolean text, double x, double y, DrawingCanvas canvas) {
-        this(text, x, y, (Color)null, canvas);
+        this(text, x, y, null, canvas);
     }
 
     public Text(boolean text, DrawableInterface basis, DrawingCanvas canvas) {
-        this(text, (DrawableInterface)basis, (Color)null, canvas);
+        this(text, basis, null, canvas);
     }
 
     public Text(boolean text, Location origin, DrawingCanvas canvas) {
-        this(text, (Location)origin, (Color)null, canvas);
+        this(text, origin, null, canvas);
     }
 
     public Text(char text, double x, double y, DrawingCanvas canvas) {
-        this(text, x, y, (Color)null, canvas);
+        this(text, x, y, null, canvas);
     }
 
     public Text(char text, DrawableInterface basis, DrawingCanvas canvas) {
-        this(text, (DrawableInterface)basis, (Color)null, canvas);
+        this(text, basis, null, canvas);
     }
 
     public Text(char text, Location origin, DrawingCanvas canvas) {
-        this(text, (Location)origin, (Color)null, canvas);
+        this(text, origin, null, canvas);
     }
 
     public Text(double text, double x, double y, DrawingCanvas canvas) {
-        this(text, x, y, (Color)null, canvas);
+        this(text, x, y, null, canvas);
     }
 
     public Text(double text, DrawableInterface basis, DrawingCanvas canvas) {
-        this(text, (DrawableInterface)basis, (Color)null, canvas);
+        this(text, basis, null, canvas);
     }
 
     public Text(double text, Location origin, DrawingCanvas canvas) {
-        this(text, (Location)origin, (Color)null, canvas);
+        this(text, origin, null, canvas);
     }
 
     public Text(long text, double x, double y, DrawingCanvas canvas) {
-        this(text, x, y, (Color)null, canvas);
+        this(text, x, y, null, canvas);
     }
 
     public Text(long text, DrawableInterface basis, DrawingCanvas canvas) {
-        this(text, (DrawableInterface)basis, (Color)null, canvas);
+        this(text, basis, null, canvas);
     }
 
     public Text(long text, Location origin, DrawingCanvas canvas) {
-        this(text, (Location)origin, (Color)null, canvas);
+        this(text, origin, null, canvas);
     }
 
     private Shape setEmptyShapes() {
@@ -274,7 +274,7 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
                 Shape basisShape = this.basis.getShape();
                 (new TextWrappingLayout(this, this.alignH, this.alignV, basisShape, g2.getFontRenderContext())).doLayout();
             } else {
-                (new TextWrappingLayout(this, this.alignH, this.alignV, (Shape)null, g2.getFontRenderContext())).doLayout();
+                (new TextWrappingLayout(this, this.alignH, this.alignV, null, g2.getFontRenderContext())).doLayout();
             }
 
             return this.getShape();
@@ -323,7 +323,7 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
     }
 
     public void setPlain() {
-        this.setFont(this.font.deriveFont(0));
+        this.setFont(this.font.deriveFont(Font.PLAIN));
     }
 
     public void setBold(boolean b) {
@@ -387,7 +387,7 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
             double length = line.getStart().distanceTo(line.getEnd());
             AffineTransform transform = AffineTransform.getTranslateInstance(x, y);
             transform.rotate(Math.atan2(dy, dx));
-            transform.translate(length * (this.getHorizontalAlignment() + (double)1.0F) / (double)2.0F, (double)0.0F);
+            transform.translate(length * (this.getHorizontalAlignment() + (double)1.0F) / (double)2.0F, 0.0F);
             shape = transform.createTransformedShape(shape);
         } else {
             Location loc;
@@ -568,7 +568,7 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
         if (this.basis == null) {
             this.getMyLocation().translate(dx, dy);
         } else {
-            ((ObjectDrawShape)this.basis).move(dx, dy);
+            this.basis.move(dx, dy);
         }
 
     }
@@ -598,7 +598,7 @@ public class Text extends ObjectDrawShape implements Drawable2DInterface, TextWr
     }
 
     public boolean contains(Location point) {
-        return this.getShape() == null ? false : this.getShape().getBounds2D().contains((double)point.getX(), (double)point.getY());
+        return this.getShape() == null ? false : this.getShape().getBounds2D().contains(point.getX(), point.getY());
     }
 
     public String toString() {

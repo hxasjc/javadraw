@@ -487,7 +487,7 @@ public abstract class Renderable implements DrawableObject {
     }
 
     protected static Location[] compileLocations(PathIterator iterator) {
-        List<Location> list = new ArrayList<Location>();
+        List<Location> list = new ArrayList<>();
         while(!iterator.isDone()) {
             double[] coords = new double[2];
             iterator.currentSegment(coords);

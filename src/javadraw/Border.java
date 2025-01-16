@@ -9,6 +9,7 @@ import java.awt.*;
 /**
  * Utility class to manage borders, which at the moment create secondary objects around a primary object.
  */
+@SuppressWarnings("unused")
 public class Border {
 
     private final Renderable parent;

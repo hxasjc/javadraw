@@ -21,10 +21,6 @@ public class FrameController extends Controller {
     }
 
     public FrameController(final int width, final int height, final String name) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                FrameController.this.startController(width, height, name);
-            }
-        });
+        SwingUtilities.invokeLater(() -> FrameController.this.startController(width, height, name));
     }
 }

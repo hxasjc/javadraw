@@ -8,6 +8,7 @@ package javadraw.internal;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import javax.swing.SwingUtilities;
 
@@ -29,24 +30,12 @@ public class Client extends NetworkThread {
         this.enqueueMessage(message, this.channelID);
     }
 
-    public String getName() {
-        return super.getName();
-    }
-
     public String getServerName() {
         return this.serverName;
     }
 
     public InetSocketAddress getServerAddress() {
         return this.serverAddress;
-    }
-
-    public boolean isRunning() {
-        return super.isRunning();
-    }
-
-    public void shutDown() {
-        super.shutDown();
     }
 
     void messageReceived(int channel, String channelName, final String message) {
@@ -64,11 +53,7 @@ public class Client extends NetworkThread {
 
     void channelReady(int channel, String channelName) {
         this.channelID = channel;
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                Client.this.listener.clientConnected(Client.this);
-            }
-        });
+        SwingUtilities.invokeLater(() -> Client.this.listener.clientConnected(Client.this));
     }
 
     boolean setup() {
@@ -79,7 +64,7 @@ public class Client extends NetworkThread {
                 SocketChannel channel = SocketChannel.open();
                 channel.configureBlocking(false);
                 channel.connect(this.serverAddress);
-                channel.register(this.selector, 8, (Object)null);
+                channel.register(this.selector, SelectionKey.OP_CONNECT, null);
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();
