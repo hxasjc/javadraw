@@ -89,7 +89,20 @@ public class Key {
     }
 
     public static Key fromChar(String keyChar) {
-        Key key;
+        try {
+            for (Field field : Key.class.getFields()) {
+                Key key = (Key) field.get(null);
+                if (key.character.equals(keyChar)) {
+                    return key;
+                }
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        throw new IllegalArgumentException("Could not find keyChar `" + keyChar + "'");
+
+        /*Key key;
 
         try {
             Field field = Key.class.getField(keyChar.toUpperCase());
@@ -99,7 +112,7 @@ public class Key {
             SneakyThrow.sneakyThrow(new InvalidArgumentException("Invalid color name passed!"));
         }
 
-        return key;
+        return key;*/
     }
 
     @Override
