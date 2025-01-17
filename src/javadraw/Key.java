@@ -1,8 +1,5 @@
 package javadraw;
 
-import javadraw.errors.InvalidArgumentException;
-import javadraw.internal.SneakyThrow;
-
 import java.lang.reflect.Field;
 import java.util.Objects;
 
@@ -77,6 +74,39 @@ public class Key {
     public static final Key F8 = new Key("F8");
     public static final Key F9 = new Key("F9");
     public static final Key F10 = new Key("F10");
+    public static final Key F11 = new Key("F11");
+    public static final Key F12 = new Key("F12");
+
+    public static final Key PRINT_SCREEN = new Key("Printscreen");
+    public static final Key SCROLL_LOCK = new Key("Scroll_lock");
+    public static final Key PAUSE = new Key("Pause");
+    public static final Key INSERT = new Key("Insert");
+    public static final Key DELETE = new Key("Delete");
+    public static final Key HOME = new Key("Home");
+    public static final Key END = new Key("End");
+    public static final Key PAGE_UP = new Key("Page_up");
+    public static final Key PAGE_DOWN = new Key("Page_down");
+
+    public static final Key WINDOWS = new Key("Windows");
+    public static final Key CONTEXT_KEY = new Key("Context_menu");
+
+    public static final Key NUMPAD_ZERO = new Key("Numpad0");
+    public static final Key NUMPAD_ONE = new Key("Numpad1");
+    public static final Key NUMPAD_TWO = new Key("Numpad2");
+    public static final Key NUMPAD_THREE = new Key("Numpad3");
+    public static final Key NUMPAD_FOUR = new Key("Numpad4");
+    public static final Key NUMPAD_FIVE = new Key("Numpad5");
+    public static final Key NUMPAD_SIX = new Key("Numpad6");
+    public static final Key NUMPAD_SEVEN = new Key("Numpad7");
+    public static final Key NUMPAD_EIGHT = new Key("Numpad8");
+    public static final Key NUMPAD_NINE = new Key("Numpad9");
+
+    public static final Key DECIMAL = new Key("Decimal");
+    public static final Key ADD = new Key("Add");
+    public static final Key SUBTRACT = new Key("Subtract");
+    public static final Key MULTIPLY = new Key("Multiply");
+    public static final Key DIVIDE = new Key("Divide");
+    public static final Key NUM_LOCK = new Key("Num_lock");
 
     public static final Key UP = new Key("Up");
     public static final Key DOWN = new Key("Down");
