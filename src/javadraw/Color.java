@@ -16,11 +16,11 @@ public class Color {
      */
     public static final Color NONE = new Color("NONE");
 
-    protected java.awt.Color color;
-
     /**
      * The color white.  In the default sRGB space.
+     * @deprecated Use {@link #WHITE} instead
      */
+    @Deprecated
     public final static Color white     = new Color(255, 255, 255);
 
     /**
@@ -31,7 +31,9 @@ public class Color {
 
     /**
      * The color light gray.  In the default sRGB space.
+     * @deprecated Use {@link #LIGHT_GRAY} instead
      */
+    @Deprecated
     public final static Color lightGray = new Color(192, 192, 192);
 
     /**
@@ -42,7 +44,9 @@ public class Color {
 
     /**
      * The color gray.  In the default sRGB space.
+     * @deprecated use {@link #GRAY} instead
      */
+    @Deprecated
     public final static Color gray      = new Color(128, 128, 128);
 
     /**
@@ -53,7 +57,9 @@ public class Color {
 
     /**
      * The color dark gray.  In the default sRGB space.
+     * @deprecated use {@link #DARK_GRAY} instead
      */
+    @Deprecated
     public final static Color darkGray  = new Color(64, 64, 64);
 
     /**
@@ -64,7 +70,9 @@ public class Color {
 
     /**
      * The color black.  In the default sRGB space.
+     * @deprecated Use {@link #BLACK} instead
      */
+    @Deprecated
     public final static Color black     = new Color(0, 0, 0);
 
     /**
@@ -75,7 +83,9 @@ public class Color {
 
     /**
      * The color red.  In the default sRGB space.
+     * @deprecated use {@link #RED} instead
      */
+    @Deprecated
     public final static Color red       = new Color(255, 0, 0);
 
     /**
@@ -86,7 +96,9 @@ public class Color {
 
     /**
      * The color pink.  In the default sRGB space.
+     * @deprecated Use {@link #PINK} instead
      */
+    @Deprecated
     public final static Color pink      = new Color(255, 175, 175);
 
     /**
@@ -97,7 +109,9 @@ public class Color {
 
     /**
      * The color orange.  In the default sRGB space.
+     * @deprecated use {@link #ORANGE} instead
      */
+    @Deprecated
     public final static Color orange    = new Color(255, 200, 0);
 
     /**
@@ -108,7 +122,9 @@ public class Color {
 
     /**
      * The color yellow.  In the default sRGB space.
+     * @deprecated use {@link #YELLOW} instead
      */
+    @Deprecated
     public final static Color yellow    = new Color(255, 255, 0);
 
     /**
@@ -119,7 +135,9 @@ public class Color {
 
     /**
      * The color green.  In the default sRGB space.
+     * @deprecated Use {@link #GREEN} instead
      */
+    @Deprecated
     public final static Color green     = new Color(0, 255, 0);
 
     /**
@@ -130,7 +148,9 @@ public class Color {
 
     /**
      * The color magenta.  In the default sRGB space.
+     * @deprecated Use {@link #MAGENTA} instead
      */
+    @Deprecated
     public final static Color magenta   = new Color(255, 0, 255);
 
     /**
@@ -141,7 +161,9 @@ public class Color {
 
     /**
      * The color cyan.  In the default sRGB space.
+     * @deprecated Use {@link #CYAN} instead
      */
+    @Deprecated
     public final static Color cyan      = new Color(0, 255, 255);
 
     /**
@@ -152,7 +174,9 @@ public class Color {
 
     /**
      * The color blue.  In the default sRGB space.
+     * @deprecated Use {@link #BLUE} instead
      */
+    @Deprecated
     public final static Color blue      = new Color(0, 0, 255);
 
     /**
@@ -160,6 +184,8 @@ public class Color {
      * @since 1.4
      */
     public final static Color BLUE = blue;
+
+    protected java.awt.Color color;
 
     private int r, g, b;
 
