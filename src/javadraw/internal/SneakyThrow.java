@@ -5,15 +5,17 @@
 
 package javadraw.internal;
 
+import lombok.SneakyThrows;
+
 import java.io.IOException;
 
 public class SneakyThrow {
     public SneakyThrow() {
     }
 
+    @SneakyThrows
     public static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
-        //throw e;
-        throw new RuntimeException(e);
+        throw e;
     }
 
     private static void throwsSneakyIOException() {
