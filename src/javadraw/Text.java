@@ -1,6 +1,5 @@
 package javadraw;
 
-import javadraw.errors.InvalidArgumentException;
 import javadraw.internal.SneakyThrow;
 
 /**
@@ -176,7 +175,7 @@ public class Text extends Renderable {
         } else if(align.equalsIgnoreCase("right")) {
             alignment = javadraw.internal.Text.RIGHT;
         } else {
-            SneakyThrow.sneakyThrow(new InvalidArgumentException("Alignment passed was not 'LEFT', 'CENTER', or 'RIGHT'. Found: " + align));
+            SneakyThrow.sneakyThrow(new IllegalArgumentException("Alignment passed was not 'LEFT', 'CENTER', or 'RIGHT'. Found: " + align));
         }
 
         ((javadraw.internal.Text) this.object).setAlignment(alignment, ((javadraw.internal.Text) this.object).getVerticalAlignment());

@@ -1,8 +1,6 @@
 package javadraw;
 
-import javadraw.errors.InvalidArgumentException;
 import javadraw.internal.SneakyThrow;
-import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
 
@@ -204,7 +202,7 @@ public class Color {
             color = (java.awt.Color) field.get(null);
         } catch (Exception e) {
             color = null;
-            SneakyThrow.sneakyThrow(new InvalidArgumentException("Invalid color name passed!"));
+            SneakyThrow.sneakyThrow(new IllegalArgumentException("Invalid color name passed!"));
         }
 
         this.r = color.getRed();
@@ -212,11 +210,10 @@ public class Color {
         this.b = color.getBlue();
     }
 
-    @SneakyThrows
     public Color(int r, int g, int b) {
         if(r > 255 || g > 255 || b > 255 ||
             r < 0 || g < 0 || b < 0) {
-            SneakyThrow.sneakyThrow(new InvalidArgumentException("Invalid RGB values passed to Color! (0-255 only)"));
+            SneakyThrow.sneakyThrow(new IllegalArgumentException("Invalid RGB values passed to Color! (0-255 only)"));
         }
 
         this.r = r;

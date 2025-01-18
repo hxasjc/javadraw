@@ -1,5 +1,6 @@
 package javadraw.errors;
 
+@Deprecated
 public class InvalidArgumentException extends Exception {
 
     private final String message;
