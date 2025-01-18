@@ -15,6 +15,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.IOException;
+import java.util.function.Consumer;
 
 public interface DrawingCanvas extends Dependent {
     /** @deprecated */
@@ -68,6 +71,10 @@ public interface DrawingCanvas extends Dependent {
     void setLoupe(Location var1);
 
     void clearLoupe();
+
+    void screenshot(File file) throws IOException;
+
+    void screenshot(File file, Consumer<Throwable> errorHandler);
 
     static SpawnPacket fromObject(Resizable2DInterface object) {
         SpawnPacket packet = new SpawnPacket();

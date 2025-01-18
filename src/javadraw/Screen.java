@@ -1,7 +1,9 @@
 package javadraw;
 
 import javadraw.internal.DrawingCanvas;
+import lombok.SneakyThrows;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -164,6 +166,11 @@ public class Screen {
      */
     public void update() {
         this.canvas.update();
+    }
+
+    @SneakyThrows
+    public void screenshot(File file) {
+        canvas.screenshot(file);
     }
 
 

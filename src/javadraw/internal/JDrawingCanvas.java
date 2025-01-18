@@ -5,17 +5,22 @@
 
 package javadraw.internal;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import lombok.SneakyThrows;
+
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.function.Consumer;
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
-/** @deprecated */
+/**
+ * @deprecated
+ */
 public class JDrawingCanvas extends JComponent implements DrawingCanvas {
     private static final Color MINOR_GRID_COLOR = new Color(0, 0, 0, 40);
     private static final Color MAJOR_GRID_COLOR = new Color(0, 0, 0, 80);
@@ -80,7 +85,7 @@ public class JDrawingCanvas extends JComponent implements DrawingCanvas {
             Graphics2D g = this.buffer.createGraphics();
             ObjectDrawShape.draw(this, g);
             if (this.loupe != null) {
-                Ellipse2D loupeArea = new Ellipse2D.Double(this.loupe.getDoubleX() - this.loupeZoom * this.loupeSize / (double)2.0F, this.loupe.getDoubleY() - this.loupeZoom * this.loupeSize / (double)2.0F, this.loupeZoom * this.loupeSize, this.loupeZoom * this.loupeSize);
+                Ellipse2D loupeArea = new Ellipse2D.Double(this.loupe.getDoubleX() - this.loupeZoom * this.loupeSize / (double) 2.0F, this.loupe.getDoubleY() - this.loupeZoom * this.loupeSize / (double) 2.0F, this.loupeZoom * this.loupeSize, this.loupeZoom * this.loupeSize);
                 g.setColor(this.getBackground());
                 g.fill(loupeArea);
                 g.setStroke(new BasicStroke(4.0F));
@@ -117,7 +122,7 @@ public class JDrawingCanvas extends JComponent implements DrawingCanvas {
         g.setColor(MINOR_GRID_COLOR);
         int i = 4;
 
-        for(int x = 10; x < w; --i) {
+        for (int x = 10; x < w; --i) {
             if (i == 0) {
                 g.setColor(MAJOR_GRID_COLOR);
                 g.drawLine(x, 0, x, h);
@@ -132,7 +137,7 @@ public class JDrawingCanvas extends JComponent implements DrawingCanvas {
 
         i = 4;
 
-        for(int y = 10; y < h; --i) {
+        for (int y = 10; y < h; --i) {
             if (i == 0) {
                 g.setColor(MAJOR_GRID_COLOR);
                 g.drawLine(0, y, w, y);
@@ -167,6 +172,29 @@ public class JDrawingCanvas extends JComponent implements DrawingCanvas {
     public void setLoupe(Location point) {
         this.loupe = new Location(point);
         this.repaint();
+    }
+
+    @Override
+    @SneakyThrows
+    public void screenshot(File file) {
+        screenshot(file, null);
+    }
+
+    @Override
+    public void screenshot(File file, Consumer<Throwable> errorHandler) {
+        try {
+            Rectangle bounds = getBounds();
+            BufferedImage bufferedImage = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB);
+            paint(bufferedImage.getGraphics());
+
+            File temp = File.createTempFile("screenshot", "png");
+
+            ImageIO.write(bufferedImage, "png", file);
+
+            temp.deleteOnExit();
+        } catch (IOException e) {
+            errorHandler.accept(e);
+        }
     }
 
     public String toString() {

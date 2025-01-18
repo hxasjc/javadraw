@@ -16,9 +16,12 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.PrivilegedActionException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -26,6 +29,7 @@ import java.util.Iterator;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /** @deprecated */
 public class ControllerFrame extends JFrame implements AppletStub, AppletContext {
@@ -44,6 +48,7 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
     private MouseInterpreter key;
     private JCheckBoxMenuItem rulersItem;
     private JCheckBoxMenuItem gridItem;
+    private File lastScreenshotDir = null;
 
     private void showRulers() {
         ((WindowController)this.applet).setRulersVisible(true);
@@ -146,6 +151,38 @@ public class ControllerFrame extends JFrame implements AppletStub, AppletContext
         if (!mac) {
             JMenu menu = new JMenu("File");
             menuBar.add(menu);
+
+            JMenuItem screenshot = new JMenuItem("Take Screenshot");
+            screenshot.addActionListener(e -> {
+                WindowController controller = (WindowController) this.applet;
+
+                JFileChooser fileChooser = new JFileChooser();
+
+                if (lastScreenshotDir != null) {
+                    fileChooser.setCurrentDirectory(lastScreenshotDir);
+                }
+
+                fileChooser.setSelectedFile(new File(fileChooser.getCurrentDirectory(), this.getTitle() + "-screenshot.png"));
+
+                fileChooser.setDialogTitle("Save a Screenshot");
+
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG Files", "png");
+                fileChooser.addChoosableFileFilter(filter);
+
+                int result = fileChooser.showSaveDialog(null);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File dir = fileChooser.getSelectedFile();
+                    lastScreenshotDir = dir;
+                    controller.getCanvas().screenshot(
+                            dir,
+                            throwable -> JOptionPane.showMessageDialog(fileChooser, "Insufficient permissions to create a file. Please try again later", "Error creating file", JOptionPane.ERROR_MESSAGE)
+                    );
+                }
+            });
+            menu.add(screenshot);
+
             JMenuItem quit = new JMenuItem("Exit");
             quit.addActionListener(e -> {
                 ControllerFrame.this.active = false;

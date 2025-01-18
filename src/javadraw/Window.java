@@ -3,6 +3,8 @@ package javadraw;
 import javadraw.internal.WindowController;
 import javadraw.internal.WindowThread;
 
+import java.io.File;
+
 /**
  * The primary thread-controller for the application, the Window passes inputs and is meant to be the parent of any javaDraw program.
  */
@@ -209,6 +211,14 @@ public class Window {
         }
 
         System.out.println(builder);
+    }
+
+    /**
+     * Saves a screenshot of the Javadraw canvas to a file
+     * @param file The file that you want to save the screenshot to
+     */
+    public void screenshot(File file) {
+        screen.screenshot(file);
     }
 
     // ----- EVENTS ----- //
