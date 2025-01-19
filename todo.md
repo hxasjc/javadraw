@@ -22,4 +22,6 @@
   - [ ] Arc
   - [ ] AngLine
   - [ ] FilledArc
+  - [ ] FilledRoundedRect
   - [ ] FramedArc
+  - [ ] FramedRoundedRect
