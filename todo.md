@@ -10,6 +10,7 @@
 - [ ] Lines
 
 
+
 - [ ] Implement basic UI components
   - [ ] Slider
   - [ ] Progress bar
@@ -17,3 +18,8 @@
   - [ ] Radio buttons
 - [ ] Add support for remaining keys
 - [ ] Investigate adding support for more AWT paints (GradientPaint, etc)
+- [ ] Implement public classes for various classes present in `javadraw.internal` but not `javadraw`
+  - [ ] Arc
+  - [ ] AngLine
+  - [ ] FilledArc
+  - [ ] FramedArc
